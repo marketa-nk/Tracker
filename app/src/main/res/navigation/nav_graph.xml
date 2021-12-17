@@ -6,7 +6,7 @@
     app:startDestination="@id/fragment_map">
     <fragment
         android:id="@+id/fragment_map"
-        android:name="com.mint.minttracker.MapFragment"
+        android:name="com.mint.minttracker.mapFragment.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
 </navigation>

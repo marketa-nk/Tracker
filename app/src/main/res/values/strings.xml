@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">MintTracker</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="time">Time</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="altitude">Altitude(m)</string>
+    <string name="speed">Speed(km/h)</string>
+    <string name="bearing">Bearing</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="accuracy">Accuracy(m)</string>
 </resources>
