@@ -12,6 +12,6 @@ class GoogleMapsRepository{
 //
 //    override fun getMap(location: MintLocation): Single<City> {
 //        return api.getCity("${location.lat},${location.lon}")
-//            .map { City(it.results[0].addressComponents[0].longName) } //todo
+//            .map { City(it.results[0].addressComponents[0].longName) }
 //    }
 }

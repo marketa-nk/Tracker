@@ -1,6 +1,7 @@
 package com.mint.minttracker.mapFragment
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -16,12 +17,22 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.models.MintLocation
+import android.graphics.Bitmap
+import android.graphics.Canvas
+
+import android.graphics.drawable.Drawable
+
+import com.google.android.gms.maps.model.BitmapDescriptor
+
+
+
 
 class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
@@ -37,6 +48,8 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("onCreate Nata")
+
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
@@ -51,16 +64,20 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
+        println("onStart Nata")
     }
 
     override fun onResume() {
         super.onResume()
         binding.mapView.onResume()
+        println("onResume Nata")
+
     }
 
     override fun onPause() {
         super.onPause()
         binding.mapView.onPause()
+        println("onPause Nata")
     }
 
     override fun onCreateView(
@@ -82,12 +99,13 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
         binding.start.text = getString(R.string.start)
         binding.start.setOnClickListener {
-            mapPresenter.startButtonPressed()
+            mapPresenter.startButtonPressed(requireContext())
         }
         binding.stop.text = getString(R.string.stop)
         binding.stop.setOnClickListener {
-            mapPresenter.stopButtonPressed()
+            mapPresenter.stopButtonPressed(requireContext())
         }
+        println("onCreateView Nata")
 
         return binding.root
     }
@@ -139,12 +157,24 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
     override fun showCurrentLocation(location: Pair<Double, Double>) {
         val loc = LatLng(location.first, location.second)
+
+
         map.addMarker(
             MarkerOptions()
                 .position(loc)
                 .title("Marker")
+                .icon(bitmapDescriptorFromVector(requireContext(), R.drawable.ic_baseline_circle_24))
         )
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15f))
+    }
+
+    private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
+        val vectorDrawable = ContextCompat.getDrawable(context, vectorResId)
+        vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
+        val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        vectorDrawable.draw(canvas)
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -160,11 +190,15 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     override fun onStop() {
         super.onStop()
         binding.mapView.onStop()
+        println("onStop Nata")
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         binding.mapView.onDestroy()
+        println("onDestroy Nata")
+
     }
 
 

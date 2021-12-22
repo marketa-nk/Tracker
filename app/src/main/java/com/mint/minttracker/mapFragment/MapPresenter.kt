@@ -1,6 +1,9 @@
 package com.mint.minttracker.mapFragment
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.google.android.gms.maps.model.LatLng
@@ -11,8 +14,9 @@ import com.mint.minttracker.models.MintLocation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.SerialDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
+
 
 @InjectViewState
 class MapPresenter : MvpPresenter<MapView>() {
@@ -24,8 +28,9 @@ class MapPresenter : MvpPresenter<MapView>() {
     private val polylineOptions = PolylineOptions()
 
     private val compositeDisposable = CompositeDisposable()
+    private val serialDisposable = SerialDisposable()
 
-    private var disposable: Disposable? = null
+    private val locationService = LocationService.instance
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -34,18 +39,17 @@ class MapPresenter : MvpPresenter<MapView>() {
 
     fun permissionGranted(granted: Boolean) {
         if (granted) {
-            getCurrentLocation {
-                showPolyline()
-            }
+            getCurrentLocation()
             // TODO: 12/9/2021  
         } else {
             // TODO: 12/9/2021
         }
     }
 
-    fun startButtonPressed() {
-
+    fun startButtonPressed(context: Context) {
+        startLocationService(context, true) //todo потом обсудим
         dataBaseRepository.createTrack()
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 getLocationUpdates(it)
@@ -53,21 +57,27 @@ class MapPresenter : MvpPresenter<MapView>() {
                 it.printStackTrace()
             })
             .addDisposable()
-//        getLocationUpdates()
     }
 
-    // вверх
-    private val locationService = LocationService.instance
+    fun stopButtonPressed(context: Context) {
+        startLocationService(context, false)
+        serialDisposable.set(null)
+    }
 
-    fun stopButtonPressed() {
-        disposable?.dispose()
+    private fun startLocationService(context: Context, run: Boolean) {
+        val serviceIntent = Intent(context, LocationServiceForeground::class.java)
+        when (run) {
+            true -> serviceIntent.action = LocationServiceForeground.ACTION_START_FOREGROUND_SERVICE
+            else -> serviceIntent.action = LocationServiceForeground.ACTION_STOP_FOREGROUND_SERVICE
+        }
+        ContextCompat.startForegroundService(context, serviceIntent)
     }
 
     private fun showPolyline() {
         viewState?.drawPolyline(polylineOptions)
     }
 
-    private fun getCurrentLocation(onSuccess: () -> Unit) {
+    private fun getCurrentLocation() {
         locationService.getLastLocation()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -77,7 +87,7 @@ class MapPresenter : MvpPresenter<MapView>() {
                     .width(25f)
                     .color(Color.BLUE)
                     .geodesic(true)
-                onSuccess()
+                showPolyline()
                 viewState?.showData(it)
                 viewState?.showCurrentLocation(Pair(it.lat, it.lon))
             }, {
@@ -88,29 +98,37 @@ class MapPresenter : MvpPresenter<MapView>() {
     }
 
     private fun getLocationUpdates(trackId: Long) {
-
-        disposable?.dispose()
-
-        disposable = locationService.getLocation()
+        locationService.getLocation()
+            .map { location ->
+                MintLocation(0, trackId, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy)
+            }
+            .doOnNext {
+                dataBaseRepository.saveMintLocation(it)
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ location ->
-                println("getLocationUpdates 1")
-                val mintLocation = MintLocation(0, trackId, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy)
+            .subscribe({ mintLocation ->
+
                 viewState?.showData(mintLocation)
                 viewState?.showCurrentLocation(Pair(mintLocation.lat, mintLocation.lon))
-                dataBaseRepository.saveMintLocation(mintLocation)
 
-//                println("${App.instance.database.tracksDao().getCount()} track mintthursday")
-//                println("${App.instance.database.mintLocationDao().getCount()} mintlocations mintthursday")
+                //todo App.instance.database.tracksDao() вынести в поле
+                //todo App.instance.database.mintLocationDao() вынести в поле
+                println("${App.instance.database.tracksDao().getCount()} tracks Nata")
+                println("${App.instance.database.mintLocationDao().getCount()} mintlocations Nata")
             }, {
                 it.printStackTrace()
             })
-            .addDisposable()
+            .addDisposable(serialDisposable)
     }
 
     private fun Disposable.addDisposable(): Disposable {
         compositeDisposable.add(this)
+        return this
+    }
+    private fun Disposable.addDisposable(serialDisposable: SerialDisposable): Disposable {
+        serialDisposable.set(this)
+        compositeDisposable.add(serialDisposable)
         return this
     }
 

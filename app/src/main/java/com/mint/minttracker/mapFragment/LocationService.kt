@@ -28,7 +28,7 @@ class LocationService(context: Context) {
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
                     println("getLocationUpdates locationResult")
-                    val location: android.location.Location? = locationResult.lastLocation
+                    val location: Location? = locationResult.lastLocation
                     if (location != null) {
                         emitter.onNext(location)
                     }
@@ -45,8 +45,15 @@ class LocationService(context: Context) {
     @SuppressLint("MissingPermission")
     fun getLastLocation(): Single<MintLocation> {
         return Single.create { emitter ->
-            fusedLocationProvider.lastLocation.addOnSuccessListener { location ->
-                emitter.onSuccess(MintLocation(0, -1, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy))
+            try {
+                fusedLocationProvider.lastLocation.addOnSuccessListener { location: Location? ->
+                    location ?: emitter.onError(NullPointerException("LastLocation is null"))
+                    if (location != null) {
+                        emitter.onSuccess(MintLocation(0, -1, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy))
+                    }
+                }
+            } catch (e: Exception) {
+                emitter.onError(e)
             }
         }
     }
@@ -54,6 +61,5 @@ class LocationService(context: Context) {
     companion object {
         lateinit var instance: LocationService
     }
-
 }
 

@@ -7,5 +7,5 @@ import retrofit2.http.Query
 interface GoogleMapsApi {
 //
 //    @GET("json?language=ru&result_type=locality")
-//    fun getCity(@Query("latlng") latlng: String): Single<GoogleMapsModelNetwork> //todo
+//    fun getCity(@Query("latlng") latlng: String): Single<GoogleMapsModelNetwork>
 }
