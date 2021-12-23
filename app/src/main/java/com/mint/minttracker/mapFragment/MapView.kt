@@ -17,5 +17,4 @@ interface MapView: MvpView{
     fun showData(mintLocation: MintLocation)
     fun showCurrentLocation(location: Pair<Double, Double>)
 
-
 }

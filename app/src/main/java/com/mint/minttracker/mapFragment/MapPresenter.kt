@@ -74,7 +74,7 @@ class MapPresenter : MvpPresenter<MapView>() {
     }
 
     private fun showPolyline() {
-        viewState?.drawPolyline(polylineOptions)
+//        viewState?.drawPolyline(polylineOptions)
     }
 
     private fun getCurrentLocation() {

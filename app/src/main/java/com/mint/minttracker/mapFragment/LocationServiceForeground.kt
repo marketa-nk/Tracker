@@ -73,7 +73,7 @@ class LocationServiceForeground : Service() {
         // Stop foreground service and remove the notification.
         stopForeground(true)
         // Stop the foreground service.
-        stopSelf()
+        stopSelf(1)
     }
 
     companion object {

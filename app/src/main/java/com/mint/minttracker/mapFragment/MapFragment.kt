@@ -1,9 +1,11 @@
 package com.mint.minttracker.mapFragment
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,21 +19,10 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.models.MintLocation
-import android.graphics.Bitmap
-import android.graphics.Canvas
-
-import android.graphics.drawable.Drawable
-
-import com.google.android.gms.maps.model.BitmapDescriptor
-
-
 
 
 class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
@@ -45,6 +36,7 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
     private lateinit var map: GoogleMap
+    var marker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,8 +129,10 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
+        map.isMyLocationEnabled = true
     }
 
     override fun drawPolyline(polylineOptions: PolylineOptions) {
@@ -157,15 +151,16 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
     override fun showCurrentLocation(location: Pair<Double, Double>) {
         val loc = LatLng(location.first, location.second)
-
-
-        map.addMarker(
-            MarkerOptions()
-                .position(loc)
-                .title("Marker")
-                .icon(bitmapDescriptorFromVector(requireContext(), R.drawable.ic_baseline_circle_24))
-        )
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15f))
+        if (marker == null) {
+            marker = map.addMarker(
+                MarkerOptions()
+                    .position(loc)
+                    .title("Marker")
+                    .icon(bitmapDescriptorFromVector(requireContext(), R.drawable.ic_baseline_circle_24))
+            )
+        }
+        marker?.position = loc
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 15f))
     }
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
