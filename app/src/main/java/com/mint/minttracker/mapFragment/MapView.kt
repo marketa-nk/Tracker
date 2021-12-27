@@ -16,5 +16,6 @@ interface MapView: MvpView{
     fun drawPolyline(polylineOptions: PolylineOptions)
     fun showData(mintLocation: MintLocation)
     fun showCurrentLocation(location: Pair<Double, Double>)
+    fun visibilityStartButton(visibility: Boolean)
 
 }

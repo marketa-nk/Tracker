@@ -1,13 +1,17 @@
 package com.mint.minttracker.models
 
+import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import java.util.*
+import com.google.android.gms.maps.model.LatLng
+import kotlinx.android.parcel.Parcelize
 
 @Entity
-class MintLocation(
+@Parcelize
+data class MintLocation(
     @PrimaryKey(autoGenerate = true)
-    val idMint: Long,
+    val id: Long,
     val idTrack: Long,
     val time: Long,
     val lat: Double,
@@ -16,6 +20,7 @@ class MintLocation(
     val speed: Float,
     val bearing: Float,
     val accuracy: Float,
-    ) {
-
+) : Parcelable {
+    @Ignore
+    val latLng = LatLng(lat, lon)
 }

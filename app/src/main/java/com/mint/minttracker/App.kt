@@ -14,7 +14,7 @@ class App : Application() {
         LocationService.instance = LocationService(applicationContext)
         instance = this
         database = Room.databaseBuilder(this, AppDatabase::class.java, "database")
-            .allowMainThreadQueries() //todo
+//            .allowMainThreadQueries() //todo
             .fallbackToDestructiveMigration() //todo
             .build()
     }

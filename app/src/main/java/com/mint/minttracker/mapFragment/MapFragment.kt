@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +24,6 @@ import com.google.android.gms.maps.model.*
 import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.models.MintLocation
-
 
 class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
@@ -62,6 +62,7 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         binding.mapView.onResume()
+        mapPresenter.appIsResumed(requireContext().applicationContext)
         println("onResume Nata")
 
     }
@@ -69,6 +70,7 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     override fun onPause() {
         super.onPause()
         binding.mapView.onPause()
+        mapPresenter.appIsPaused(requireContext().applicationContext)
         println("onPause Nata")
     }
 
@@ -91,11 +93,11 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
         binding.start.text = getString(R.string.start)
         binding.start.setOnClickListener {
-            mapPresenter.startButtonPressed(requireContext())
+            mapPresenter.startButtonPressed(requireContext().applicationContext)
         }
         binding.stop.text = getString(R.string.stop)
         binding.stop.setOnClickListener {
-            mapPresenter.stopButtonPressed(requireContext())
+            mapPresenter.stopButtonPressed(requireContext().applicationContext)
         }
         println("onCreateView Nata")
 
@@ -133,10 +135,24 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map.isMyLocationEnabled = true
+        map.uiSettings.isZoomControlsEnabled = true
+
     }
 
     override fun drawPolyline(polylineOptions: PolylineOptions) {
-//        googleMap.addPolyline(polylineOptions)//todo
+        map.addPolyline(
+            polylineOptions
+                .color(Color.RED)
+                .width(10.0F)
+        )
+    }
+
+    override fun visibilityStartButton(visibility: Boolean) {
+        if (visibility) {
+            binding.start.visibility = View.VISIBLE
+        } else {
+            binding.start.visibility = View.GONE
+        }
     }
 
     override fun showData(mintLocation: MintLocation) {
@@ -151,16 +167,16 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
     override fun showCurrentLocation(location: Pair<Double, Double>) {
         val loc = LatLng(location.first, location.second)
-        if (marker == null) {
-            marker = map.addMarker(
-                MarkerOptions()
-                    .position(loc)
-                    .title("Marker")
-                    .icon(bitmapDescriptorFromVector(requireContext(), R.drawable.ic_baseline_circle_24))
-            )
-        }
+//        if (marker == null) {
+//            marker = map.addMarker(
+//                MarkerOptions()
+//                    .position(loc)
+//                    .title("Marker")
+//                    .icon(bitmapDescriptorFromVector(requireContext(), R.drawable.ic_baseline_circle_24))
+//            )
+//        }
         marker?.position = loc
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 15f))
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 17.0f))
     }
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {

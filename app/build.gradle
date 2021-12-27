@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -65,7 +66,8 @@ dependencies {
     kapt 'com.arello-mobile:moxy-compiler:1.5.5'
     implementation 'com.arello-mobile:moxy:1.5.5'
 
-    implementation 'androidx.room:room-runtime:2.3.0'
-    kapt "androidx.room:room-compiler:2.3.0"
+    implementation 'androidx.room:room-runtime:2.4.0'
+    implementation "androidx.room:room-rxjava2:2.4.0"
+    kapt "androidx.room:room-compiler:2.4.0"
 
 }

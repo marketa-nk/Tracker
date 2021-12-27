@@ -2,12 +2,11 @@ package com.mint.minttracker.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.*
 
 
 @Entity
-class Track (
+class Track(
     @PrimaryKey(autoGenerate = true)
-    val idTrack: Long,
+    val id: Long,
     val date: Long
-        )
+)
