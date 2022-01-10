@@ -1,7 +1,6 @@
 package com.mint.minttracker.mapFragment
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -14,6 +13,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -37,6 +37,7 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     var marker: Marker? = null
+    private var line: Polyline? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,6 +96,14 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
         binding.start.setOnClickListener {
             mapPresenter.startButtonPressed(requireContext().applicationContext)
         }
+        binding.pause.text = getString(R.string.pause)
+        binding.pause.setOnClickListener {
+            mapPresenter.pauseButtonPressed(requireContext().applicationContext)
+        }
+        binding.resume.text = getString(R.string.resume)
+        binding.resume.setOnClickListener {
+            mapPresenter.resumeButtonPressed(requireContext().applicationContext)
+        }
         binding.stop.text = getString(R.string.stop)
         binding.stop.setOnClickListener {
             mapPresenter.stopButtonPressed(requireContext().applicationContext)
@@ -131,28 +140,48 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
         }
     }
 
-    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        map.isMyLocationEnabled = true
+        map.isMyLocationEnabled = !(ActivityCompat.checkSelfPermission(requireContext().applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext().applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         map.uiSettings.isZoomControlsEnabled = true
+        drawPolyline()
 
     }
 
-    override fun drawPolyline(polylineOptions: PolylineOptions) {
-        map.addPolyline(
-            polylineOptions
+    private fun drawPolyline() {
+        line = map.addPolyline(
+            PolylineOptions()
                 .color(Color.RED)
                 .width(10.0F)
         )
     }
 
-    override fun visibilityStartButton(visibility: Boolean) {
+    override fun updatePolyline(points: List<LatLng>){
+        line?.points = points
+    }
+
+    private fun changeVisibilityView(view: View, visibility: Boolean) {
         if (visibility) {
-            binding.start.visibility = View.VISIBLE
+            view.visibility = View.VISIBLE
         } else {
-            binding.start.visibility = View.GONE
+            view.visibility = View.INVISIBLE
         }
+    }
+
+    override fun visibilityStartButton(visibility: Boolean) {
+        changeVisibilityView(binding.start, visibility)
+    }
+
+    override fun visibilityPauseButton(visibility: Boolean) {
+        changeVisibilityView(binding.pause, visibility)
+    }
+
+    override fun visibilityResumeButton(visibility: Boolean) {
+        changeVisibilityView(binding.resume, visibility)
+    }
+
+    override fun visibilityStopButton(visibility: Boolean) {
+        changeVisibilityView(binding.stop, visibility)
     }
 
     override fun showData(mintLocation: MintLocation) {
@@ -165,7 +194,7 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
         binding.accuracyData.text = mintLocation.accuracy.toString()
     }
 
-    override fun showCurrentLocation(location: Pair<Double, Double>) {
+    override fun showLocation(location: Pair<Double, Double>) {
         val loc = LatLng(location.first, location.second)
 //        if (marker == null) {
 //            marker = map.addMarker(

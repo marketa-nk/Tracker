@@ -7,7 +7,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.mint.minttracker.App
 import com.mint.minttracker.database.DataBaseRepository
 import com.mint.minttracker.mapFragment.LocationService
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_RESUMED
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
+import com.mint.minttracker.models.Track
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -23,25 +26,52 @@ class Tracker(
 
     val compositeDisposable = CompositeDisposable()
     private val disposableLocationUpdates = SerialDisposable()
-    private val disposableStartTracking = SerialDisposable()
 
-    fun start() {
-        dataBaseRepository.createTrack()
-            .subscribeOn(Schedulers.io())
+    fun start(status: String) {
+        when (status) {
+            STATUS_STARTED ->
+                dataBaseRepository.createTrack()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        getLocationUpdates(it)
+                    }, {
+                        it.printStackTrace()
+                    })
+                    .addDisposable()
+            STATUS_RESUMED ->
+                dataBaseRepository.getLastTrack()
+                    .doOnSuccess {
+                        dataBaseRepository.updateTrack(Track(it.id, it.date, status))
+                        println("$status onResumeTracker Nata")
+                    }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        getLocationUpdates(it.id)
+                    }, {
+                        it.printStackTrace()
+                    })
+                    .addDisposable()
+        }
+    }
+
+    fun stop(status: String) {
+        dataBaseRepository.getLastTrack()
+            .observeOn(Schedulers.io())
+            .doOnSuccess {
+                dataBaseRepository.updateTrack(Track(it.id, it.date, status))
+                println("$status onStopTracker Nata")
+            }
             .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
             .subscribe({
-                getLocationUpdates(it)
+
             }, {
                 it.printStackTrace()
-            })
-            .addDisposable()
-    }
-
-    fun stop() {
-//        disposableStartTracking.set(null)
+            }).addDisposable()
         disposableLocationUpdates.set(null)
     }
-
 
 
     private fun getLocationUpdates(trackId: Long) {
@@ -54,7 +84,6 @@ class Tracker(
                 dataBaseRepository.saveLocation(location)
             }
             .doOnNext {
-
                 println("${App.instance.database.tracksDao().getCount()} tracks Nata")
                 println("${App.instance.database.mintLocationDao().getCount()} mintlocations Nata")
             }

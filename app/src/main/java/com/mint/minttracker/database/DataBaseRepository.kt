@@ -1,6 +1,7 @@
 package com.mint.minttracker.database
 
 import com.mint.minttracker.App
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
 import io.reactivex.Single
@@ -15,17 +16,30 @@ class DataBaseRepository(
             .map { mintLocation.copy(id = it) }
     }
 
+    fun getLastLocationRecordByTrackId(id: Long): Single<MintLocation>{
+        return locationDao.getLastRecordByTrackId(id)
+    }
+
     fun getAllLocationsById(id: Long): Single<List<MintLocation>> {
         return locationDao.getAllRecordsByID(id)
     }
 
     fun createTrack(): Single<Long> {
-        return tracksDao.insertTrack(Track(0, System.currentTimeMillis()))
+        return tracksDao.insertTrack(Track(0, System.currentTimeMillis(), STATUS_STARTED))
             .doOnSuccess { println("Track created - Nata") }
     }
 
-    fun getLastTrack(): Single<Long> {
+    fun updateTrack(track: Track){
+        tracksDao.updateTrack(track).also { println("${track.status}") }
+    }
+
+    fun getLastTrackId(): Single<Long> {
+        return tracksDao.getLastTrackId()
+            .doOnSuccess { println("Track got last one idTrack - Nata") }
+    }
+
+    fun getLastTrack(): Single<Track> {
         return tracksDao.getLastTrack()
-            .doOnSuccess { println("Track got last one - Nata") }
+            .doOnSuccess { println("Track got last one track - Nata") }
     }
 }

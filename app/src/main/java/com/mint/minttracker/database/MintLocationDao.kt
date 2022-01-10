@@ -19,6 +19,9 @@ interface MintLocationDao {
     @Query("SELECT * FROM mintLocation WHERE idTrack = :id")
     fun getAllRecordsByID(id: Long): Single<List<MintLocation>>
 
+    @Query("SELECT * FROM mintLocation WHERE idTrack = :id")
+    fun getLastRecordByTrackId(id: Long): Single<MintLocation>
+
     @Query("SELECT COUNT(id) idMint FROM mintlocation")
     fun getCount(): Int
 

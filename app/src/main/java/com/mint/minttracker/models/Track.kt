@@ -8,5 +8,6 @@ import androidx.room.PrimaryKey
 class Track(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
-    val date: Long
+    val date: Long,
+    val status: String
 )

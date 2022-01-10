@@ -13,20 +13,29 @@ import androidx.core.app.NotificationCompat
 import com.mint.minttracker.MainActivity
 import com.mint.minttracker.R
 import com.mint.minttracker.data.Tracker
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_FINISHED
 
 class LocationServiceForeground : Service() {
 
     private val CHANNEL_ID = "ForegroundServiceChannel"
-    private var startOn = true
     private val tracker: Tracker = Tracker(this)
+    private var status: String? = null
+    private var serviceStarted = false
+
+    override fun onCreate() {
+        super.onCreate()
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
-            when (intent.action) {
-                ACTION_START_FOREGROUND_SERVICE -> startForegroundService()
-                ACTION_STOP_FOREGROUND_SERVICE -> stopForegroundService()
-                ACTION_PLAY -> Toast.makeText(applicationContext, "You click Play button.", Toast.LENGTH_LONG).show()
-                ACTION_PAUSE -> Toast.makeText(applicationContext, "You click Pause button.", Toast.LENGTH_LONG).show()
+            status = intent.getStringExtra("status")
+            if (status != null) {
+                when (intent.action) {
+                    ACTION_START_FOREGROUND_SERVICE -> startForegroundService(status!!)
+                    ACTION_STOP_FOREGROUND_SERVICE -> stopForegroundService(status!!)
+                    ACTION_PLAY -> Toast.makeText(applicationContext, "You click Play button.", Toast.LENGTH_LONG).show()
+                    ACTION_PAUSE -> Toast.makeText(applicationContext, "You click Pause button.", Toast.LENGTH_LONG).show()
+                }
             }
         }
         return START_NOT_STICKY
@@ -36,7 +45,7 @@ class LocationServiceForeground : Service() {
         return null
     }
 
-    private fun startForegroundService() {
+    private fun startForegroundService(status: String) {
         createNotificationChannel()
         val pendingIntent = PendingIntent.getActivity(this, 0, Intent(), 0)
         // Create notification builder.
@@ -69,19 +78,26 @@ class LocationServiceForeground : Service() {
         // Build the notification.
         // Start foreground service.
         startForeground(1, notification.build())
-        if (startOn) {
-            startOn = false
-            tracker.start()
-        }
+//        if (startOn) {
+//            startOn = false
+//            tracker.start(status)
+//        }
+        tracker.start(status)
+        serviceStarted = true
     }
 
-    private fun stopForegroundService() {
-        if (!startOn){
-            startOn = true
-            tracker.stop()
+    private fun stopForegroundService(status: String) {
+        tracker.stop(status)
+        if (serviceStarted){
+            serviceStarted = false
             stopForeground(true)
             stopSelf(1)
         }
+//        if (!startOn) {
+//            startOn = true
+//            stopForeground(true)
+//            stopSelf(1)
+//        }
     }
 
     private fun createNotificationChannel() {
