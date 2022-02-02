@@ -1,9 +1,6 @@
 package com.mint.minttracker.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.mint.minttracker.models.MintLocation
 import io.reactivex.Single
 
@@ -12,6 +9,9 @@ interface MintLocationDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMintLocation(mintLocation: MintLocation): Single<Long>
+
+    @Delete
+    fun deleteMintLocations(list: List <MintLocation>): Single<Int>
 
     @Query("SELECT * FROM mintLocation")
     fun getAllRecords(): List<MintLocation>

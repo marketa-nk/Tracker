@@ -4,6 +4,7 @@ import com.mint.minttracker.App
 import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
+import io.reactivex.Observable
 import io.reactivex.Single
 
 class DataBaseRepository(
@@ -16,10 +17,6 @@ class DataBaseRepository(
             .map { mintLocation.copy(id = it) }
     }
 
-    fun getLastLocationRecordByTrackId(id: Long): Single<MintLocation>{
-        return locationDao.getLastRecordByTrackId(id)
-    }
-
     fun getAllLocationsById(id: Long): Single<List<MintLocation>> {
         return locationDao.getAllRecordsByID(id)
     }
@@ -29,7 +26,7 @@ class DataBaseRepository(
             .doOnSuccess { println("Track created - Nata") }
     }
 
-    fun updateTrack(track: Track){
+    fun updateTrack(track: Track) {
         tracksDao.updateTrack(track).also { println("${track.status}") }
     }
 
@@ -41,5 +38,16 @@ class DataBaseRepository(
     fun getLastTrack(): Single<Track> {
         return tracksDao.getLastTrack()
             .doOnSuccess { println("Track got last one track - Nata") }
+    }
+
+    fun getAllTracks(): Observable<List<Track>> {
+        return tracksDao.getAllTracks()
+            .doOnNext { println("You've got all tracks - Nata") }
+    }
+    fun deleteTrack(track: Track): Single<Int> {
+        return tracksDao.deleteTrack(track).also { println("$track is deleted - Nata") }
+    }
+    fun getTrackById(id: Long): Single<Track>{
+       return tracksDao.getTrackByID(id)
     }
 }

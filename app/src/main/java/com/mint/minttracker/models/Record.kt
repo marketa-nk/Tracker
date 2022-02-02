@@ -1,0 +1,14 @@
+package com.mint.minttracker.models
+
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class Record(
+    val idTrack: Long,
+    val date: Long,
+    val distance: Double,
+    val totalTime: Long,
+    val aveSpeed: Double,
+    val maxSpeed: Float
+) : Parcelable

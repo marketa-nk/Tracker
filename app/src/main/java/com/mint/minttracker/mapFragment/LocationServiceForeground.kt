@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
@@ -12,8 +13,9 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.mint.minttracker.MainActivity
 import com.mint.minttracker.R
-import com.mint.minttracker.data.Tracker
-import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_FINISHED
+import com.mint.minttracker.services.Tracker
+import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
+
 
 class LocationServiceForeground : Service() {
 
@@ -28,7 +30,7 @@ class LocationServiceForeground : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
-            status = intent.getStringExtra("status")
+            status = intent.getStringExtra(STATUS) //todo status в статику - done
             if (status != null) {
                 when (intent.action) {
                     ACTION_START_FOREGROUND_SERVICE -> startForegroundService(status!!)
@@ -60,7 +62,16 @@ class LocationServiceForeground : Service() {
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_outline_gps_not_fixed_24))
             .setFullScreenIntent(pendingIntent, true)
 
-        val contentIntent = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
+//        val nIntent = packageManager.getLaunchIntentForPackage(ContextConstants.PACKAGE_NAME)
+//        val pendingIntent = PendingIntent.getActivity(
+//            this, 0, nIntent,
+//            PendingIntent.FLAG_UPDATE_CURRENT
+//        )
+//        notificationBuilder.setContentIntent(pendingIntent)
+        val notificationIntent = Intent(this, MainActivity::class.java)
+        notificationIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+        notificationIntent.addFlags(FLAG_ACTIVITY_SINGLE_TOP)
+        val contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0 )
         notification.setContentIntent(contentIntent)
 
         // Add Play button intent in notification.
@@ -93,11 +104,6 @@ class LocationServiceForeground : Service() {
             stopForeground(true)
             stopSelf(1)
         }
-//        if (!startOn) {
-//            startOn = true
-//            stopForeground(true)
-//            stopSelf(1)
-//        }
     }
 
     private fun createNotificationChannel() {
@@ -117,6 +123,7 @@ class LocationServiceForeground : Service() {
         const val ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE"
         const val ACTION_PAUSE = "ACTION_PAUSE"
         const val ACTION_PLAY = "ACTION_PLAY"
+        const val STATUS = "STATUS"
     }
 
     override fun onDestroy() {

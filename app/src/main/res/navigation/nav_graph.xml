@@ -8,5 +8,28 @@
         android:id="@+id/fragment_map"
         android:name="com.mint.minttracker.mapFragment.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_fragment_map_to_historyFragment"
+            app:destination="@id/historyFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.mint.minttracker.historyFragment.HistoryFragment"
+        android:label="HistoryFragment"
+        tools:layout="@layout/fragment_history"
+        >
+        <action
+            android:id="@+id/action_historyFragment_to_recordFragment"
+            app:destination="@id/recordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recordFragment"
+        android:name="com.mint.minttracker.recordFragment.RecordFragment"
+        android:label="fragment_record"
+        tools:layout="@layout/fragment_record" />
 </navigation>

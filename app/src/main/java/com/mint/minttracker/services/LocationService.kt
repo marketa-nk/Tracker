@@ -1,4 +1,4 @@
-package com.mint.minttracker.mapFragment
+package com.mint.minttracker.services
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -11,7 +11,7 @@ import com.google.android.gms.location.LocationServices
 import com.mint.minttracker.models.MintLocation
 import io.reactivex.Observable
 import io.reactivex.Single
-
+//todo  LocationService в каком пакете должен лежать? - done
 class LocationService(context: Context) {
 
     private val fusedLocationProvider = LocationServices.getFusedLocationProviderClient(context)
@@ -27,7 +27,7 @@ class LocationService(context: Context) {
             val callback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
-                    println("getLocationUpdates locationResult")
+                    println("getLocationUpdates locationResult - nata")
                     val location: Location? = locationResult.lastLocation
                     if (location != null) {
                         emitter.onNext(location)

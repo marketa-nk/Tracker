@@ -3,6 +3,7 @@ package com.mint.minttracker.database
 import androidx.room.*
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
+import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao
@@ -13,6 +14,9 @@ interface TracksDao {
 
     @Update
     fun updateTrack(track: Track)
+
+    @Delete
+    fun deleteTrack(track: Track): Single<Int>
 
 //    @Query("SELECT * FROM track")
 //    fun getAllRecords(): List<Track>
@@ -25,4 +29,10 @@ interface TracksDao {
 
     @Query("SELECT * FROM track ORDER BY id DESC LIMIT 1")
     fun getLastTrack(): Single<Track>
+
+    @Query("SELECT * FROM track")
+    fun getAllTracks(): Observable<List<Track>>
+
+    @Query("SELECT * FROM track WHERE id = :id")
+    fun getTrackByID(id: Long): Single<Track>
 }

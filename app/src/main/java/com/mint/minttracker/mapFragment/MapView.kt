@@ -23,4 +23,7 @@ interface MapView: MvpView{
     fun visibilityResumeButton(visibility: Boolean)
     fun visibilityStopButton(visibility: Boolean)
 
+    @StateStrategyType(value = OneExecutionStateStrategy::class)
+    fun navigateToHistoryFragment()
+
 }

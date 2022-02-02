@@ -1,4 +1,4 @@
-package com.mint.minttracker.data
+package com.mint.minttracker.services
 
 import android.content.Context
 import android.content.Intent
@@ -6,7 +6,8 @@ import android.os.Bundle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.mint.minttracker.App
 import com.mint.minttracker.database.DataBaseRepository
-import com.mint.minttracker.mapFragment.LocationService
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.LOCATION
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_FINISHED
 import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_RESUMED
 import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
@@ -34,7 +35,7 @@ class Tracker(
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        getLocationUpdates(it)
+                        saveLocationUpdates(it)
                     }, {
                         it.printStackTrace()
                     })
@@ -42,13 +43,14 @@ class Tracker(
             STATUS_RESUMED ->
                 dataBaseRepository.getLastTrack()
                     .doOnSuccess {
+                        //todo переделать со мной
                         dataBaseRepository.updateTrack(Track(it.id, it.date, status))
                         println("$status onResumeTracker Nata")
                     }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        getLocationUpdates(it.id)
+                        saveLocationUpdates(it.id)
                     }, {
                         it.printStackTrace()
                     })
@@ -56,12 +58,38 @@ class Tracker(
         }
     }
 
+    //    fun stop(status: String) {
+//        dataBaseRepository.getLastTrack()
+//            .observeOn(Schedulers.io())
+//            .doOnSuccess {
+//                //todo переделать со мной
+//                 dataBaseRepository.updateTrack(Track(it.id, it.date, status))
+//                println("$status onStopTracker Nata")
+//            }
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribeOn(Schedulers.io())
+//            .subscribe({
+//
+//            }, {
+//                it.printStackTrace()
+//            })
+//            .addDisposable()
+//
+//        disposableLocationUpdates.set(null)
+//    }
     fun stop(status: String) {
         dataBaseRepository.getLastTrack()
-            .observeOn(Schedulers.io())
-            .doOnSuccess {
-                dataBaseRepository.updateTrack(Track(it.id, it.date, status))
-                println("$status onStopTracker Nata")
+            .flatMap { track ->
+                dataBaseRepository.getAllLocationsById(track.id)
+                    .map { track to it }
+            }
+            .doOnSuccess { (track, locations) ->
+                if (locations.isEmpty()&& status == STATUS_FINISHED) {
+                    dataBaseRepository.deleteTrack(track)
+                } else {
+                    dataBaseRepository.updateTrack(Track(track.id, track.date, status))
+                    println("$status onStopTracker Nata")
+                }
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
@@ -69,12 +97,14 @@ class Tracker(
 
             }, {
                 it.printStackTrace()
-            }).addDisposable()
-        disposableLocationUpdates.set(null)
+            })
+            .addDisposable()
+
     }
 
 
-    private fun getLocationUpdates(trackId: Long) {
+    //todo название метода не соотвествует коду - done
+    private fun saveLocationUpdates(trackId: Long) {
         locationService.getLocation()
             .observeOn(Schedulers.io())
             .map { location ->
@@ -98,10 +128,10 @@ class Tracker(
     }
 
     private fun sendMessageToFragment(mintLocation: MintLocation) {
-        val intent = Intent("LocationUpdates")
+        val intent = Intent("LocationUpdates") ////todo в статику
         val bundle = Bundle()
         bundle.putParcelable("Location", mintLocation)
-        intent.putExtra("Location", bundle)
+        intent.putExtra(LOCATION, bundle)
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
 

@@ -3,7 +3,7 @@ package com.mint.minttracker
 import android.app.Application
 import androidx.room.Room
 import com.mint.minttracker.database.AppDatabase
-import com.mint.minttracker.mapFragment.LocationService
+import com.mint.minttracker.services.LocationService
 
 class App : Application() {
 
@@ -14,7 +14,6 @@ class App : Application() {
         LocationService.instance = LocationService(applicationContext)
         instance = this
         database = Room.databaseBuilder(this, AppDatabase::class.java, "database")
-//            .allowMainThreadQueries() //todo
             .fallbackToDestructiveMigration() //todo
             .build()
     }

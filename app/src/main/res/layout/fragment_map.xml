@@ -7,11 +7,29 @@
     android:orientation="vertical"
     tools:context=".mapFragment.MapFragment">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/myAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/myToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/white"
+            />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <com.google.android.gms.maps.MapView
         android:id="@+id/map_view"
+        android:name="com.google.android.gms.maps.MapView"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:name="com.google.android.gms.maps.MapView"/>
+        android:layout_height="300dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_layout"
@@ -255,10 +273,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
-            app:layout_constraintStart_toEndOf="@id/start"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/start"
             app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics"
             tools:text="Stop" />
+
+        <Button
+            android:id="@+id/history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/history"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/start" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
