@@ -15,6 +15,7 @@ import com.mint.minttracker.mapFragment.LocationServiceForeground.Companion.STAT
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
 import com.mint.minttracker.services.LocationService
+import com.mint.minttracker.services.Tracker.Companion.LOCATION_UPDATES
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -31,7 +32,6 @@ class MapPresenter : BasePresenter<MapView>() {
             val bundle = intent.getBundleExtra(LOCATION) //todo "Location" должно быть в статике - done
             val lastLocation = bundle?.getParcelable<Parcelable>("Location") as MintLocation?
 
-            //todo вынести в отдельный метод - done
             if (lastLocation != null) {
                 showTracking(lastLocation)
             }
@@ -52,10 +52,9 @@ class MapPresenter : BasePresenter<MapView>() {
     }
 
     fun appIsResumed(context: Context) {
-        getPointsForPolyline(
-        )
+        getPointsForPolyline()
         LocalBroadcastManager.getInstance(context).registerReceiver(
-            messageReceiver, IntentFilter("LocationUpdates")
+            messageReceiver, IntentFilter(LOCATION_UPDATES)
         )
     }
 
@@ -63,13 +62,10 @@ class MapPresenter : BasePresenter<MapView>() {
         dataBaseRepository.getLastTrack()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
-            .doOnSuccess {
-
-            }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({
-                if (it != null && it.status != STATUS_FINISHED) {
+                if (it.status != STATUS_FINISHED) {
                     showLastData(it)
                 }
             }, {
@@ -79,38 +75,42 @@ class MapPresenter : BasePresenter<MapView>() {
     }
 
     fun appIsPaused(context: Context) {
-        //todo где как положено?
+        //todo переделать
         LocalBroadcastManager.getInstance(context).unregisterReceiver(messageReceiver)
     }
 
     fun permissionGranted(granted: Boolean) {
         if (granted) {
-
-            //todo вынести в отдельный метод
-            dataBaseRepository.getLastTrack()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .doOnSuccess {
-                    if (it != null && it.status != STATUS_FINISHED) {
-                        dataBaseRepository.updateTrack(Track(it.id, it.date, STATUS_PAUSED))
-                        stateOfButtons(start = false, pause = false, resume = true, stop = true)
-                        showLastData(it)
-                    } else {
-                        stateOfButtons(start = true, pause = false, resume = false, stop = false)
-                        showMyCurrentLocation()
-                    }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe({
-
-                }, {
-                    it.printStackTrace()
-                })
-                .addDisposable()
+            setInitialState()
         } else {
             // TODO: 12/9/2021
         }
+    }
+
+    private fun setInitialState() {
+        dataBaseRepository.getLastTrack()
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .doOnSuccess {
+                if (it.status != STATUS_FINISHED) {
+                    dataBaseRepository.updateTrack(Track(it.id, it.date, STATUS_PAUSED))
+                    stateOfButtons(start = false, pause = false, resume = true, stop = true)
+                    showLastData(it)
+                } else {
+                    stateOfButtons(start = true, pause = false, resume = false, stop = false)
+                    showMyCurrentLocation()
+                }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+
+            }, {
+                stateOfButtons(start = true, pause = false, resume = false, stop = false)
+                showMyCurrentLocation()
+                it.printStackTrace()
+            })
+            .addDisposable()
     }
 
     private fun showLastData(track: Track) {
@@ -119,10 +119,10 @@ class MapPresenter : BasePresenter<MapView>() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ mintLocations ->
                 if (mintLocations.size > 1) {
-                viewState?.showData(mintLocations[mintLocations.size - 1])
-                viewState?.showLocation(Pair(mintLocations[mintLocations.size - 1].lat, mintLocations[mintLocations.size - 1].lon))
-                points.addAll(mintLocations.map { it.latLng })
-                viewState?.updatePolyline(points)
+                    viewState?.showData(mintLocations[mintLocations.size - 1])
+                    viewState?.showLocation(Pair(mintLocations[mintLocations.size - 1].lat, mintLocations[mintLocations.size - 1].lon))
+                    points.addAll(mintLocations.map { it.latLng })
+                    viewState?.updatePolyline(points)
                 }
             }, {
                 it.printStackTrace()

@@ -3,6 +3,7 @@ package com.mint.minttracker.services
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.mint.minttracker.App
 import com.mint.minttracker.database.DataBaseRepository
@@ -58,25 +59,6 @@ class Tracker(
         }
     }
 
-    //    fun stop(status: String) {
-//        dataBaseRepository.getLastTrack()
-//            .observeOn(Schedulers.io())
-//            .doOnSuccess {
-//                //todo переделать со мной
-//                 dataBaseRepository.updateTrack(Track(it.id, it.date, status))
-//                println("$status onStopTracker Nata")
-//            }
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribeOn(Schedulers.io())
-//            .subscribe({
-//
-//            }, {
-//                it.printStackTrace()
-//            })
-//            .addDisposable()
-//
-//        disposableLocationUpdates.set(null)
-//    }
     fun stop(status: String) {
         dataBaseRepository.getLastTrack()
             .flatMap { track ->
@@ -128,9 +110,10 @@ class Tracker(
     }
 
     private fun sendMessageToFragment(mintLocation: MintLocation) {
-        val intent = Intent("LocationUpdates") ////todo в статику
+        val intent = Intent(LOCATION_UPDATES)
         val bundle = Bundle()
-        bundle.putParcelable("Location", mintLocation)
+        //todo сделай bundle через bundleOf()
+        bundle.putParcelable("Location", mintLocation)////todo в статику
         intent.putExtra(LOCATION, bundle)
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
@@ -144,5 +127,9 @@ class Tracker(
         serialDisposable.set(this)
         compositeDisposable.add(serialDisposable)
         return this
+    }
+
+    companion object{
+        const val LOCATION_UPDATES = "LOCATION_UPDATES"
     }
 }

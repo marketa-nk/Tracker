@@ -4,6 +4,7 @@ import android.location.Location
 import com.arellomobile.mvp.InjectViewState
 import com.mint.minttracker.BasePresenter
 import com.mint.minttracker.database.DataBaseRepository
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_FINISHED
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Record
 import io.reactivex.Observable
@@ -24,9 +25,9 @@ class HistoryPresenter : BasePresenter<HistoryView>() {
 
     private fun getRecordList() {
         dataBaseRepository.getAllTracks()
-            .switchMap  {
+            .switchMap {
                 println("trackList ${it.size} - nata")
-                Observable.fromIterable(it)
+                Observable.fromIterable(it.filter { track -> track.status == STATUS_FINISHED })
                     .flatMapSingle { track ->
                         println("Track ${track.id} $track - nata")
                         getRecord(track.id)

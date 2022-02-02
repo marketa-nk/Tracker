@@ -24,7 +24,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
 import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentMapBinding
+import com.mint.minttracker.historyFragment.round
 import com.mint.minttracker.models.MintLocation
+import java.text.DateFormat
+import java.text.DateFormat.getDateTimeInstance
 import java.text.SimpleDateFormat
 
 class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
@@ -39,8 +42,6 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
     private var map: GoogleMap? = null
 
-    //todo тебе нужен маркер? - нет
-//    var marker: Marker? = null
     private var polyline: Polyline? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -169,20 +170,8 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
         polyline?.points = points
     }
 
-    //todo написать екстеншен функцию - done
-//    private fun changeVisibilityView(view: View, visibility: Boolean) {
-//        if (visibility) {
-//            view.visibility = View.VISIBLE
-//        } else {
-//            view.visibility = View.INVISIBLE
-//        }
-//    }
-    private fun View.changeVisibility(visibility: Boolean){
-        if (visibility) {
-            this.visibility = View.VISIBLE
-        } else {
-            this.visibility = View.INVISIBLE
-        }
+    private fun View.changeVisibility(visibility: Boolean) {
+        this.visibility = if (visibility) View.VISIBLE else View.INVISIBLE
     }
 
     override fun visibilityStartButton(visibility: Boolean) {
@@ -202,12 +191,14 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     }
 
     override fun showData(mintLocation: MintLocation) {
-        binding.timeData.text = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(mintLocation.time)
-        binding.longitudeData.text = mintLocation.lon.toString()
-        binding.altitudeData.text = mintLocation.altitude.toInt().toString()
-        binding.speedData.text = (mintLocation.speed * 3.6).toString()
-        binding.bearingData.text = mintLocation.bearing.toInt().toString()
-        binding.accuracyData.text = mintLocation.accuracy.toString()
+        binding.timeData.text = getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(mintLocation.time)
+//        binding.timeData.text = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(mintLocation.time)
+        binding.latitudeData.text = "${(mintLocation.lat)}"
+        binding.longitudeData.text ="${(mintLocation.lon)}"
+        binding.altitudeData.text ="${(mintLocation.altitude).round()}"
+        binding.speedData.text = "${(mintLocation.speed * 3.6).round()}"
+        binding.bearingData.text = "${(mintLocation.bearing.toDouble()).round()}"
+        binding.accuracyData.text ="${(mintLocation.accuracy.toDouble()).round()}"
     }
 
     override fun navigateToHistoryFragment() {
@@ -216,15 +207,6 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
     override fun showLocation(location: Pair<Double, Double>) {
         val loc = LatLng(location.first, location.second)
-//        if (marker == null) {
-//            marker = map.addMarker(
-//                MarkerOptions()
-//                    .position(loc)
-//                    .title("Marker")
-//                    .icon(bitmapDescriptorFromVector(requireContext(), R.drawable.ic_baseline_circle_24))
-//            )
-//        }
-//        marker?.position = loc
         map?.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 17.0f))
     }
 
