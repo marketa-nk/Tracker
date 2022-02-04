@@ -9,33 +9,48 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.arellomobile.mvp.InjectViewState
 import com.google.android.gms.maps.model.LatLng
+import com.mint.minttracker.App
 import com.mint.minttracker.BasePresenter
 import com.mint.minttracker.database.DataBaseRepository
+import com.mint.minttracker.di.components.AppScope
 import com.mint.minttracker.mapFragment.LocationServiceForeground.Companion.STATUS
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
 import com.mint.minttracker.services.LocationService
+import com.mint.minttracker.services.Tracker.Companion.LOCATION_BUNDLE
 import com.mint.minttracker.services.Tracker.Companion.LOCATION_UPDATES
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
+@AppScope
 @InjectViewState
 class MapPresenter : BasePresenter<MapView>() {
 
-    private val dataBaseRepository: DataBaseRepository = DataBaseRepository()
-    private val locationService: LocationService = LocationService.instance
+    @Inject
+    lateinit var dataBaseRepository: DataBaseRepository
+
+    @Inject
+    lateinit var appContext: Context
+
+    @Inject
+    lateinit var locationService: LocationService
 
     private var points = mutableListOf<LatLng>()
 
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val bundle = intent.getBundleExtra(LOCATION) //todo "Location" должно быть в статике - done
-            val lastLocation = bundle?.getParcelable<Parcelable>("Location") as MintLocation?
+            val lastLocation = bundle?.getParcelable<Parcelable>(LOCATION_BUNDLE) as MintLocation?
 
             if (lastLocation != null) {
                 showTracking(lastLocation)
             }
         }
+    }
+
+    init {
+        App.instance.appComponent.injectMapPresenter(this)
     }
 
     private fun showTracking(lastLocation: MintLocation) {
@@ -51,9 +66,9 @@ class MapPresenter : BasePresenter<MapView>() {
         println("onFirstViewAttach Nata")
     }
 
-    fun appIsResumed(context: Context) {
+    fun appIsResumed() {
         getPointsForPolyline()
-        LocalBroadcastManager.getInstance(context).registerReceiver(
+        LocalBroadcastManager.getInstance(appContext).registerReceiver(
             messageReceiver, IntentFilter(LOCATION_UPDATES)
         )
     }
@@ -74,9 +89,9 @@ class MapPresenter : BasePresenter<MapView>() {
             .addDisposable()
     }
 
-    fun appIsPaused(context: Context) {
+    fun appIsPaused() {
         //todo переделать
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(messageReceiver)
+        LocalBroadcastManager.getInstance(appContext).unregisterReceiver(messageReceiver)
     }
 
     fun permissionGranted(granted: Boolean) {
@@ -147,26 +162,26 @@ class MapPresenter : BasePresenter<MapView>() {
             .addDisposable()
     }
 
-    fun startButtonPressed(context: Context) {
+    fun startButtonPressed() {
         points = mutableListOf()
         viewState?.updatePolyline(points)
         stateOfButtons(start = false, pause = true, resume = false, stop = true)
-        startLocationService(context, true, STATUS_STARTED)
+        startLocationService(true, STATUS_STARTED)
     }
 
-    fun pauseButtonPressed(context: Context) {
+    fun pauseButtonPressed() {
         stateOfButtons(start = false, pause = false, resume = true, stop = true)
-        startLocationService(context, false, STATUS_PAUSED)
+        startLocationService(false, STATUS_PAUSED)
     }
 
-    fun resumeButtonPressed(context: Context) {
+    fun resumeButtonPressed() {
         stateOfButtons(start = false, pause = true, resume = false, stop = true)
-        startLocationService(context, true, STATUS_RESUMED)
+        startLocationService(true, STATUS_RESUMED)
     }
 
-    fun stopButtonPressed(context: Context) {
+    fun stopButtonPressed() {
         stateOfButtons(start = true, pause = false, resume = false, stop = false)
-        startLocationService(context, false, STATUS_FINISHED)
+        startLocationService(false, STATUS_FINISHED)
     }
 
     private fun stateOfButtons(start: Boolean, pause: Boolean, resume: Boolean, stop: Boolean) {
@@ -180,8 +195,8 @@ class MapPresenter : BasePresenter<MapView>() {
         viewState?.navigateToHistoryFragment()
     }
 
-    private fun startLocationService(context: Context, run: Boolean, status: String) {
-        val serviceIntent = Intent(context, LocationServiceForeground::class.java).apply {
+    private fun startLocationService(run: Boolean, status: String) {
+        val serviceIntent = Intent(appContext, LocationServiceForeground::class.java).apply {
             putExtra(STATUS, status)
             action = if (run) {
                 LocationServiceForeground.ACTION_START_FOREGROUND_SERVICE
@@ -189,7 +204,7 @@ class MapPresenter : BasePresenter<MapView>() {
                 LocationServiceForeground.ACTION_STOP_FOREGROUND_SERVICE
             }
         }
-        ContextCompat.startForegroundService(context, serviceIntent)
+        ContextCompat.startForegroundService(appContext, serviceIntent)
     }
 
     companion object {

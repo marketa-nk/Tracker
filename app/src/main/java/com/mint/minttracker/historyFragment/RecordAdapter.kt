@@ -1,6 +1,5 @@
 package com.mint.minttracker.historyFragment
 
-
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -8,9 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mint.minttracker.databinding.ViewRecordBinding
 import com.mint.minttracker.models.Record
 import java.text.DateFormat
-import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
-
 
 class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(RecordsDiffUtil()) {
 
@@ -30,7 +27,6 @@ class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(Reco
 
         fun bind(record: Record) {
             binding.date.text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(record.date)
-//            binding.date.text = SimpleDateFormat("d MMMM yyyy").format(record.date)
             binding.timeText.text = timeToString(record.totalTime)
             binding.distanceText.text = "${(record.distance).round()}м"
             binding.speedAveText.text = "${(record.aveSpeed * 3.6).round()}км/ч"
@@ -43,7 +39,6 @@ class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(Reco
                 true
             }
         }
-
 
         private fun timeToString(totalTime: Long): String {
             val sec = (totalTime / 1000).toInt() % 60

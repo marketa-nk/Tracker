@@ -1,7 +1,6 @@
 package com.mint.minttracker.database
 
 import androidx.room.*
-import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -18,9 +17,6 @@ interface TracksDao {
     @Delete
     fun deleteTrack(track: Track): Single<Int>
 
-//    @Query("SELECT * FROM track")
-//    fun getAllRecords(): List<Track>
-//
     @Query("SELECT COUNT(id) FROM track")
     fun getCount(): Int
 

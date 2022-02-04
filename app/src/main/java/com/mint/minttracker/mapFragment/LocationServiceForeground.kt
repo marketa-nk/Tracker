@@ -15,17 +15,20 @@ import com.mint.minttracker.MainActivity
 import com.mint.minttracker.R
 import com.mint.minttracker.services.Tracker
 import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
-
+import com.mint.minttracker.App
+import javax.inject.Inject
 
 class LocationServiceForeground : Service() {
 
     private val CHANNEL_ID = "ForegroundServiceChannel"
-    private val tracker: Tracker = Tracker(this)
+    @Inject
+    lateinit var tracker: Tracker
     private var status: String? = null
     private var serviceStarted = false
 
     override fun onCreate() {
         super.onCreate()
+        App.instance.appComponent.injectLocationServiceForeground(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -62,12 +65,6 @@ class LocationServiceForeground : Service() {
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_outline_gps_not_fixed_24))
             .setFullScreenIntent(pendingIntent, true)
 
-//        val nIntent = packageManager.getLaunchIntentForPackage(ContextConstants.PACKAGE_NAME)
-//        val pendingIntent = PendingIntent.getActivity(
-//            this, 0, nIntent,
-//            PendingIntent.FLAG_UPDATE_CURRENT
-//        )
-//        notificationBuilder.setContentIntent(pendingIntent)
         val notificationIntent = Intent(this, MainActivity::class.java)
         notificationIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
         notificationIntent.addFlags(FLAG_ACTIVITY_SINGLE_TOP)

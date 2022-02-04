@@ -9,7 +9,6 @@ import com.mint.minttracker.models.Record
 @StateStrategyType(value = AddToEndSingleStrategy::class)
 interface RecordView : MvpView {
 
-    //    @StateStrategyType(value = OneExecutionStateStrategy::class)
     fun showRecordInfo(record: Record)
     fun showPolyline(list: List<LatLng>)
 }

@@ -1,15 +1,15 @@
 package com.mint.minttracker.database
 
-import com.mint.minttracker.App
 import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
 import io.reactivex.Observable
 import io.reactivex.Single
+import javax.inject.Inject
 
-class DataBaseRepository(
-    private val tracksDao: TracksDao = App.instance.database.tracksDao(),
-    private val locationDao: MintLocationDao = App.instance.database.mintLocationDao()
+class DataBaseRepository @Inject constructor(
+    private val tracksDao: TracksDao,
+    private val locationDao: MintLocationDao
 ) {
 
     fun saveLocation(mintLocation: MintLocation): Single<MintLocation> {
@@ -28,11 +28,6 @@ class DataBaseRepository(
 
     fun updateTrack(track: Track) {
         tracksDao.updateTrack(track).also { println("${track.status}") }
-    }
-
-    fun getLastTrackId(): Single<Long> {
-        return tracksDao.getLastTrackId()
-            .doOnSuccess { println("Track got last one idTrack - Nata") }
     }
 
     fun getLastTrack(): Single<Track> {

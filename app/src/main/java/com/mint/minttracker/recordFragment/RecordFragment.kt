@@ -28,18 +28,12 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
     private var map: GoogleMap? = null
     private var polyline: Polyline? = null
 
-
     init {
         println("recordFragment created - Nata")
     }
 
     private var _binding: FragmentRecordBinding? = null
     private val binding get() = _binding!!
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,6 +50,7 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
         }
         return binding.root
     }
+
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
@@ -66,7 +61,6 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
         super.onResume()
         binding.mapView.onResume()
         println("onResume RecordFragment Nata")
-
     }
 
     override fun onPause() {
@@ -78,7 +72,6 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap.apply {
             uiSettings.isZoomControlsEnabled = true
-
         }
     }
 
@@ -131,17 +124,15 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
         super.onStop()
         binding.mapView.onStop()
         println("onStop RecordFragment Nata")
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
         binding.mapView.onDestroy()
         println("onDestroy RecordFragment Nata")
-
     }
-    companion object {
 
+    companion object {
         const val ARG_RECORD = "ARG_RECORD"
     }
 

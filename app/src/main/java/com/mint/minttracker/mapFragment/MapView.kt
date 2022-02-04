@@ -25,5 +25,4 @@ interface MapView: MvpView{
 
     @StateStrategyType(value = OneExecutionStateStrategy::class)
     fun navigateToHistoryFragment()
-
 }

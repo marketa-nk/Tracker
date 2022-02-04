@@ -2,11 +2,10 @@ package com.mint.minttracker.services
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.mint.minttracker.App
 import com.mint.minttracker.database.DataBaseRepository
+import com.mint.minttracker.di.components.AppScope
 import com.mint.minttracker.mapFragment.MapPresenter.Companion.LOCATION
 import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_FINISHED
 import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_RESUMED
@@ -18,12 +17,13 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.SerialDisposable
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-
-class Tracker(
+@AppScope
+class Tracker @Inject constructor (
     private val context: Context,
-    private val dataBaseRepository: DataBaseRepository = DataBaseRepository(),
-    private val locationService: LocationService = LocationService.instance
+    private val dataBaseRepository: DataBaseRepository,
+    private val locationService: LocationService
 ) {
 
     val compositeDisposable = CompositeDisposable()
@@ -66,7 +66,7 @@ class Tracker(
                     .map { track to it }
             }
             .doOnSuccess { (track, locations) ->
-                if (locations.isEmpty()&& status == STATUS_FINISHED) {
+                if (locations.isEmpty() && status == STATUS_FINISHED) {
                     dataBaseRepository.deleteTrack(track)
                 } else {
                     dataBaseRepository.updateTrack(Track(track.id, track.date, status))
@@ -84,7 +84,6 @@ class Tracker(
 
     }
 
-
     //todo название метода не соотвествует коду - done
     private fun saveLocationUpdates(trackId: Long) {
         locationService.getLocation()
@@ -96,8 +95,8 @@ class Tracker(
                 dataBaseRepository.saveLocation(location)
             }
             .doOnNext {
-                println("${App.instance.database.tracksDao().getCount()} tracks Nata")
-                println("${App.instance.database.mintLocationDao().getCount()} mintlocations Nata")
+//                println("${App.instance.database.tracksDao().getCount()} tracks Nata")
+//                println("${App.instance.database.mintLocationDao().getCount()} mintlocations Nata")
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -110,12 +109,8 @@ class Tracker(
     }
 
     private fun sendMessageToFragment(mintLocation: MintLocation) {
-        val intent = Intent(LOCATION_UPDATES)
-        val bundle = Bundle()
-        //todo сделай bundle через bundleOf()
-        bundle.putParcelable("Location", mintLocation)////todo в статику
-        intent.putExtra(LOCATION, bundle)
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+        //todo сделай bundle через bundleOf() - done
+        LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(LOCATION_UPDATES).putExtra(LOCATION, bundleOf(Pair(LOCATION_BUNDLE, mintLocation))))
     }
 
     private fun Disposable.addDisposable(): Disposable {
@@ -129,7 +124,8 @@ class Tracker(
         return this
     }
 
-    companion object{
+    companion object {
         const val LOCATION_UPDATES = "LOCATION_UPDATES"
+        const val LOCATION_BUNDLE = "LOCATION_BUNDLE"
     }
 }

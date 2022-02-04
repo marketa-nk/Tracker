@@ -28,7 +28,6 @@ import com.mint.minttracker.historyFragment.round
 import com.mint.minttracker.models.MintLocation
 import java.text.DateFormat
 import java.text.DateFormat.getDateTimeInstance
-import java.text.SimpleDateFormat
 
 class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
@@ -68,15 +67,14 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         binding.mapView.onResume()
-        mapPresenter.appIsResumed(requireContext().applicationContext)
+        mapPresenter.appIsResumed()
         println("onResume Nata")
-
     }
 
     override fun onPause() {
         super.onPause()
         binding.mapView.onPause()
-        mapPresenter.appIsPaused(requireContext().applicationContext)
+        mapPresenter.appIsPaused()
         println("onPause Nata")
     }
 
@@ -99,19 +97,19 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
         binding.start.text = getString(R.string.start)
         binding.start.setOnClickListener {
-            mapPresenter.startButtonPressed(requireContext().applicationContext)
+            mapPresenter.startButtonPressed()
         }
         binding.pause.text = getString(R.string.pause)
         binding.pause.setOnClickListener {
-            mapPresenter.pauseButtonPressed(requireContext().applicationContext)
+            mapPresenter.pauseButtonPressed()
         }
         binding.resume.text = getString(R.string.resume)
         binding.resume.setOnClickListener {
-            mapPresenter.resumeButtonPressed(requireContext().applicationContext)
+            mapPresenter.resumeButtonPressed()
         }
         binding.stop.text = getString(R.string.stop)
         binding.stop.setOnClickListener {
-            mapPresenter.stopButtonPressed(requireContext().applicationContext)
+            mapPresenter.stopButtonPressed()
         }
         binding.history.setOnClickListener {
             mapPresenter.historyButtonPressed()

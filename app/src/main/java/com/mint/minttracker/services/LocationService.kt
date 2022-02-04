@@ -8,11 +8,14 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.mint.minttracker.di.components.AppScope
 import com.mint.minttracker.models.MintLocation
 import io.reactivex.Observable
 import io.reactivex.Single
-//todo  LocationService в каком пакете должен лежать? - done
-class LocationService(context: Context) {
+import javax.inject.Inject
+
+@AppScope
+class LocationService @Inject constructor(context: Context) {
 
     private val fusedLocationProvider = LocationServices.getFusedLocationProviderClient(context)
 
@@ -56,10 +59,6 @@ class LocationService(context: Context) {
                 emitter.onError(e)
             }
         }
-    }
-
-    companion object {
-        lateinit var instance: LocationService
     }
 }
 

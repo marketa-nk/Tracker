@@ -1,39 +1,24 @@
 package com.mint.minttracker
 
 import android.app.Application
-import androidx.room.Room
-import com.mint.minttracker.database.AppDatabase
-import com.mint.minttracker.services.LocationService
-import androidx.sqlite.db.SupportSQLiteDatabase
-
-import androidx.room.migration.Migration
-
-
-
+import com.mint.minttracker.di.components.AppComponent
+import com.mint.minttracker.di.components.DaggerAppComponent
+import com.mint.minttracker.di.modules.ContextModule
+import com.mint.minttracker.di.modules.DatabaseModule
 
 class App : Application() {
 
-    lateinit var database: AppDatabase
-
-    val MIGRATION_1_2: Migration = object : Migration(1, 2) { //todo когда потребуется миграция
-        override fun migrate(database: SupportSQLiteDatabase) {
-//            database.execSQL("ALTER TABLE Employee ADD COLUMN birthday INTEGER DEFAULT 0 NOT NULL")
-        }
-    }
-    val MIGRATION_2_3: Migration = object : Migration(2, 3) { //todo когда потребуется миграция
-        override fun migrate(database: SupportSQLiteDatabase) {
-//            database.execSQL("ALTER TABLE Employee ADD COLUMN birthday INTEGER DEFAULT 0 NOT NULL")
-        }
-    }
+    lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
-        LocationService.instance = LocationService(applicationContext)
-        instance = this
-        database = Room.databaseBuilder(this, AppDatabase::class.java, "database")
-            .fallbackToDestructiveMigration() //todo
-//            .addMigrations(MIGRATION_1_2, MIGRATION_2_3) //todo когда потребуется миграция
+
+        appComponent = DaggerAppComponent.builder()
+            .contextModule(ContextModule(this))
+            .databaseModule(DatabaseModule(this))
             .build()
+
+        instance = this
     }
 
     companion object {

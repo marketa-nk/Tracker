@@ -2,8 +2,10 @@ package com.mint.minttracker.historyFragment
 
 import android.location.Location
 import com.arellomobile.mvp.InjectViewState
+import com.mint.minttracker.App
 import com.mint.minttracker.BasePresenter
 import com.mint.minttracker.database.DataBaseRepository
+import com.mint.minttracker.di.components.AppScope
 import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_FINISHED
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Record
@@ -12,11 +14,18 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.math.BigDecimal.ROUND_HALF_UP
+import javax.inject.Inject
 
+@AppScope
 @InjectViewState
 class HistoryPresenter : BasePresenter<HistoryView>() {
 
-    private val dataBaseRepository: DataBaseRepository = DataBaseRepository()
+    @Inject
+    lateinit var dataBaseRepository: DataBaseRepository
+
+    init {
+        App.instance.appComponent.injectHistoryPresenter(this)
+    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()

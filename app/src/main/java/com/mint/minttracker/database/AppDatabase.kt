@@ -9,5 +9,4 @@ import com.mint.minttracker.models.Track
 abstract class AppDatabase : RoomDatabase() {
     abstract fun tracksDao(): TracksDao
     abstract fun mintLocationDao(): MintLocationDao
-
 }
