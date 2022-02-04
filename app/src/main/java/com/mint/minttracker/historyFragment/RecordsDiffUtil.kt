@@ -5,7 +5,7 @@ import com.mint.minttracker.models.Record
 
 class RecordsDiffUtil : DiffUtil.ItemCallback<Record>() {
     override fun areItemsTheSame(oldItem: Record, newItem: Record): Boolean {
-        return oldItem.idTrack == newItem.idTrack //todo почему date а не id, лучше id всегда использовать, то чтоне может поменяться - done
+        return oldItem.idTrack == newItem.idTrack
     }
 
     override fun areContentsTheSame(oldItem: Record, newItem: Record): Boolean {

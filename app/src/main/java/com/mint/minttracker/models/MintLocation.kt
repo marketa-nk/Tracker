@@ -1,6 +1,7 @@
 package com.mint.minttracker.models
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -17,10 +18,13 @@ data class MintLocation(
     val lat: Double,
     val lon: Double,
     val altitude: Double,
-    val speed: Float,
+    @ColumnInfo(name = "speed")
+    val speedInMeters: Float,
     val bearing: Float,
     val accuracy: Float,
 ) : Parcelable {
     @Ignore
     val latLng = LatLng(lat, lon)
+    @Ignore
+    val speedInKm: Float = speedInMeters * 3.6f
 }

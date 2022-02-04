@@ -97,7 +97,7 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
 
     override fun showRecordInfo(record: Record) {
         binding.date.text = SimpleDateFormat("d MMMM yyyy").format(record.date)
-        binding.timeText.text = timeToString(record.totalTime)
+        binding.timeText.text = timeToString(record.totalTimeMs)
         binding.distanceText.text = "${(record.distance).round()}м"
         binding.speedAveText.text = "${(record.aveSpeed * 3.6).round()}км/ч"
         binding.speedMaxText.text = "${(record.maxSpeed * 3.6).round()}км/ч"

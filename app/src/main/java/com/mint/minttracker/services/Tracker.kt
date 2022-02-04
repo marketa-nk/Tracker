@@ -84,19 +84,14 @@ class Tracker @Inject constructor (
 
     }
 
-    //todo название метода не соотвествует коду - done
     private fun saveLocationUpdates(trackId: Long) {
         locationService.getLocation()
-            .observeOn(Schedulers.io())
+            .observeOn(Schedulers.io())//todo надо ли эта строчка
             .map { location ->
                 MintLocation(0, trackId, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy)
             }
             .concatMapSingle { location ->
                 dataBaseRepository.saveLocation(location)
-            }
-            .doOnNext {
-//                println("${App.instance.database.tracksDao().getCount()} tracks Nata")
-//                println("${App.instance.database.mintLocationDao().getCount()} mintlocations Nata")
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -109,7 +104,6 @@ class Tracker @Inject constructor (
     }
 
     private fun sendMessageToFragment(mintLocation: MintLocation) {
-        //todo сделай bundle через bundleOf() - done
         LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(LOCATION_UPDATES).putExtra(LOCATION, bundleOf(Pair(LOCATION_BUNDLE, mintLocation))))
     }
 

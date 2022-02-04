@@ -56,7 +56,6 @@ class HistoryPresenter : BasePresenter<HistoryView>() {
             .addDisposable()
     }
 
-    //todo название метода не соотвествует коду - done
     private fun getRecord(id: Long): Single<Record> {
         return dataBaseRepository.getAllLocationsById(id)
             .map {
@@ -65,7 +64,7 @@ class HistoryPresenter : BasePresenter<HistoryView>() {
                         idTrack = id,
                         date = 0,
                         distance = 0.0,
-                        totalTime = 0,
+                        totalTimeMs = 0,
                         aveSpeed = 0.0,
                         maxSpeed = 0f
                     )
@@ -74,9 +73,10 @@ class HistoryPresenter : BasePresenter<HistoryView>() {
                         idTrack = id,
                         date = it.first().time,
                         distance = getDistance(it),
-                        totalTime = it.last().time - it.first().time,
-                        aveSpeed = it.map { it.speed }.average(),
-                        maxSpeed = it.map { it.speed }.maxOrNull() ?: 0.0f
+                        totalTimeMs = it.last().time - it.first().time,
+                        aveSpeed = it.map { it.speedInKm }.average(),
+                        maxSpeed = it.maxOf { it.speedInKm }
+
                     )
                 }
             }
@@ -110,13 +110,13 @@ class HistoryPresenter : BasePresenter<HistoryView>() {
         }
         var distance = 0.0
         for (i in 0 until locationList.size - 1) {
-            distance += getDistanceBetween(locationList[i], locationList[i + 1])
+            distance += getDistanceBetweenMeters(locationList[i], locationList[i + 1])
         }
         return distance
     }
 
-    private fun getDistanceBetween(first: Location, next: Location): Double {
-        return (first.distanceTo(next)).toBigDecimal().setScale(2, ROUND_HALF_UP).toDouble() //поделить на 1000 для получения км
+    private fun getDistanceBetweenMeters(first: Location, next: Location): Double {
+        return (first.distanceTo(next)).toBigDecimal().setScale(2, ROUND_HALF_UP).toDouble()
     }
 }
 

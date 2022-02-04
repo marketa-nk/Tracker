@@ -8,7 +8,7 @@ data class Record(
     val idTrack: Long,
     val date: Long,
     val distance: Double,
-    val totalTime: Long,
+    val totalTimeMs: Long,
     val aveSpeed: Double,
     val maxSpeed: Float
 ) : Parcelable

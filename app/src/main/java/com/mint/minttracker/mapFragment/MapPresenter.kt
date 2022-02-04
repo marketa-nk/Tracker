@@ -40,7 +40,7 @@ class MapPresenter : BasePresenter<MapView>() {
 
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val bundle = intent.getBundleExtra(LOCATION) //todo "Location" должно быть в статике - done
+            val bundle = intent.getBundleExtra(LOCATION)
             val lastLocation = bundle?.getParcelable<Parcelable>(LOCATION_BUNDLE) as MintLocation?
 
             if (lastLocation != null) {
@@ -145,7 +145,6 @@ class MapPresenter : BasePresenter<MapView>() {
             .addDisposable()
     }
 
-    //todo название метода не соотвествует коду - done
     private fun showMyCurrentLocation() {
         locationService.getLocation()
             .observeOn(Schedulers.io())

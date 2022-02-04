@@ -27,7 +27,7 @@ class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(Reco
 
         fun bind(record: Record) {
             binding.date.text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(record.date)
-            binding.timeText.text = timeToString(record.totalTime)
+            binding.timeText.text = timeToString(record.totalTimeMs)
             binding.distanceText.text = "${(record.distance).round()}м"
             binding.speedAveText.text = "${(record.aveSpeed * 3.6).round()}км/ч"
             binding.speedMaxText.text = "${(record.maxSpeed * 3.6).round()}км/ч"

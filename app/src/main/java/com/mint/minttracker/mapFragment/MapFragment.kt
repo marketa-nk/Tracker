@@ -27,7 +27,6 @@ import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.historyFragment.round
 import com.mint.minttracker.models.MintLocation
 import java.text.DateFormat
-import java.text.DateFormat.getDateTimeInstance
 
 class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
@@ -155,7 +154,6 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
 
     }
 
-    //todo название метода не соотвествует коду - done
     private fun addPolyline() {
         polyline = map?.addPolyline(
             PolylineOptions()
@@ -189,12 +187,11 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     }
 
     override fun showData(mintLocation: MintLocation) {
-        binding.timeData.text = getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(mintLocation.time)
-//        binding.timeData.text = SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(mintLocation.time)
+        binding.timeData.text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(mintLocation.time)
         binding.latitudeData.text = "${(mintLocation.lat)}"
         binding.longitudeData.text ="${(mintLocation.lon)}"
         binding.altitudeData.text ="${(mintLocation.altitude).round()}"
-        binding.speedData.text = "${(mintLocation.speed * 3.6).round()}"
+        binding.speedData.text = "${(mintLocation.speedInKm).toDouble().round()}"
         binding.bearingData.text = "${(mintLocation.bearing.toDouble()).round()}"
         binding.accuracyData.text ="${(mintLocation.accuracy.toDouble()).round()}"
     }

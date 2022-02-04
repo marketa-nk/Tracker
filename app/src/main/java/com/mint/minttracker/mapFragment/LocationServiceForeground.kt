@@ -33,7 +33,7 @@ class LocationServiceForeground : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
-            status = intent.getStringExtra(STATUS) //todo status в статику - done
+            status = intent.getStringExtra(STATUS)
             if (status != null) {
                 when (intent.action) {
                     ACTION_START_FOREGROUND_SERVICE -> startForegroundService(status!!)
@@ -86,10 +86,6 @@ class LocationServiceForeground : Service() {
         // Build the notification.
         // Start foreground service.
         startForeground(1, notification.build())
-//        if (startOn) {
-//            startOn = false
-//            tracker.start(status)
-//        }
         tracker.start(status)
         serviceStarted = true
     }
