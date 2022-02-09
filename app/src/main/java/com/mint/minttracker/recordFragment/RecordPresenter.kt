@@ -5,6 +5,7 @@ import com.mint.minttracker.App
 import com.mint.minttracker.BasePresenter
 import com.mint.minttracker.database.DataBaseRepository
 import com.mint.minttracker.di.components.AppScope
+import com.mint.minttracker.domain.record.IRecordInteractor
 import com.mint.minttracker.models.Record
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -14,7 +15,7 @@ import javax.inject.Inject
 @InjectViewState
 class RecordPresenter : BasePresenter<RecordView>() {
     @Inject
-    lateinit var dataBaseRepository: DataBaseRepository
+    lateinit var iRecordInteractor: IRecordInteractor
 
     init {
         App.instance.appComponent.injectRecordPresenter(this)
@@ -24,10 +25,7 @@ class RecordPresenter : BasePresenter<RecordView>() {
 
         viewState?.showRecordInfo(record)
 
-        dataBaseRepository.getTrackById(record.idTrack)
-            .flatMap {
-                dataBaseRepository.getAllLocationsById(it.id)
-            }
+        iRecordInteractor.showTrackInfo(record)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

@@ -13,6 +13,7 @@ import com.mint.minttracker.App
 import com.mint.minttracker.BasePresenter
 import com.mint.minttracker.database.DataBaseRepository
 import com.mint.minttracker.di.components.AppScope
+import com.mint.minttracker.domain.map.IMapInteractor
 import com.mint.minttracker.mapFragment.LocationServiceForeground.Companion.STATUS
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
@@ -28,13 +29,14 @@ import javax.inject.Inject
 class MapPresenter : BasePresenter<MapView>() {
 
     @Inject
-    lateinit var dataBaseRepository: DataBaseRepository
+    lateinit var mapInteractor: IMapInteractor
+//    lateinit var dataBaseRepository: DataBaseRepository
 
     @Inject
     lateinit var appContext: Context
 
-    @Inject
-    lateinit var locationService: LocationService
+//    @Inject
+//    lateinit var locationService: LocationService
 
     private var points = mutableListOf<LatLng>()
 
@@ -74,7 +76,7 @@ class MapPresenter : BasePresenter<MapView>() {
     }
 
     private fun getPointsForPolyline() {
-        dataBaseRepository.getLastTrack()
+        mapInteractor.getLastTrack()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -103,12 +105,12 @@ class MapPresenter : BasePresenter<MapView>() {
     }
 
     private fun setInitialState() {
-        dataBaseRepository.getLastTrack()
+        mapInteractor.getLastTrack()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .doOnSuccess {
                 if (it.status != STATUS_FINISHED) {
-                    dataBaseRepository.updateTrack(Track(it.id, it.date, STATUS_PAUSED))
+                    mapInteractor.updateTrack(Track(it.id, it.date, STATUS_PAUSED))
                     stateOfButtons(start = false, pause = false, resume = true, stop = true)
                     showLastData(it)
                 } else {
@@ -129,7 +131,7 @@ class MapPresenter : BasePresenter<MapView>() {
     }
 
     private fun showLastData(track: Track) {
-        dataBaseRepository.getAllLocationsById(track.id)
+        mapInteractor.getAllLocationsById(track.id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ mintLocations ->
@@ -146,11 +148,11 @@ class MapPresenter : BasePresenter<MapView>() {
     }
 
     private fun showMyCurrentLocation() {
-        locationService.getLocation()
-            .observeOn(Schedulers.io())
-            .map { location ->
-                MintLocation(0, 0, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy)
-            }
+        mapInteractor.getLocation()
+//            .observeOn(Schedulers.io())
+//            .map { location ->
+//                MintLocation(0, 0, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy)
+//            }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ lastLocation ->
                 viewState?.showData(lastLocation)
