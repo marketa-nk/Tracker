@@ -3,20 +3,17 @@ package com.mint.minttracker.historyFragment
 import com.arellomobile.mvp.InjectViewState
 import com.mint.minttracker.App
 import com.mint.minttracker.BasePresenter
-import com.mint.minttracker.di.components.AppScope
-import com.mint.minttracker.domain.history.IHistoryInteractor
+import com.mint.minttracker.domain.history.HistoryInteractor
 import com.mint.minttracker.models.Record
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-@AppScope
 @InjectViewState
 class HistoryPresenter : BasePresenter<HistoryView>() {
 
     @Inject
-    lateinit var iHistoryInteractor: IHistoryInteractor
-//    lateinit var dataBaseRepository: DataBaseRepository
+    lateinit var historyInteractor: HistoryInteractor
 
     init {
         App.instance.appComponent.injectHistoryPresenter(this)
@@ -24,11 +21,11 @@ class HistoryPresenter : BasePresenter<HistoryView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        getRecordList()
+        loadRecordList()
     }
 
-    private fun getRecordList() {
-        iHistoryInteractor.loadHistory()
+    private fun loadRecordList() {
+        historyInteractor.loadHistory()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -75,7 +72,7 @@ class HistoryPresenter : BasePresenter<HistoryView>() {
 //            .flatMap {
 //                dataBaseRepository.deleteTrack(it)
 //            }
-        iHistoryInteractor.deleteRecord(record)
+        historyInteractor.deleteRecord(record)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

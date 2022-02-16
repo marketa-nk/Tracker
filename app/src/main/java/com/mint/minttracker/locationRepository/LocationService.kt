@@ -1,4 +1,4 @@
-package com.mint.minttracker.services
+package com.mint.minttracker.locationRepository
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,19 +8,17 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.mint.minttracker.di.components.AppScope
 import com.mint.minttracker.models.MintLocation
 import io.reactivex.Observable
 import io.reactivex.Single
 import javax.inject.Inject
 
-@AppScope
-class LocationService @Inject constructor(context: Context) {
+class LocationService @Inject constructor(context: Context) : LocationRepository {
 
     private val fusedLocationProvider = LocationServices.getFusedLocationProviderClient(context)
 
     @SuppressLint("MissingPermission")
-    fun getLocation(): Observable<Location> {
+    override fun getLocation(): Observable<Location> {
         return Observable.create { emitter ->
             val request = LocationRequest.create().apply {
                 interval = 100
@@ -46,7 +44,7 @@ class LocationService @Inject constructor(context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    fun getLastLocation(): Single<MintLocation> {
+    override fun getLastLocation(): Single<MintLocation> {
         return Single.create { emitter ->
             try {
                 fusedLocationProvider.lastLocation.addOnSuccessListener { location: Location? ->

@@ -1,99 +1,65 @@
 package com.mint.minttracker.mapFragment
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.os.Parcelable
-import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.arellomobile.mvp.InjectViewState
 import com.google.android.gms.maps.model.LatLng
 import com.mint.minttracker.App
 import com.mint.minttracker.BasePresenter
-import com.mint.minttracker.database.DataBaseRepository
-import com.mint.minttracker.di.components.AppScope
-import com.mint.minttracker.domain.map.IMapInteractor
-import com.mint.minttracker.mapFragment.LocationServiceForeground.Companion.STATUS
-import com.mint.minttracker.models.MintLocation
+import com.mint.minttracker.domain.buttonControl.ButtonControlInteractorImpl
+import com.mint.minttracker.domain.buttonControl.ButtonState
+import com.mint.minttracker.domain.location.LocationInteractorImpl
+import com.mint.minttracker.domain.map.MapInteractor
 import com.mint.minttracker.models.Track
-import com.mint.minttracker.services.LocationService
-import com.mint.minttracker.services.Tracker.Companion.LOCATION_BUNDLE
-import com.mint.minttracker.services.Tracker.Companion.LOCATION_UPDATES
+import com.mint.minttracker.services.Tracker
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.SerialDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-@AppScope
 @InjectViewState
 class MapPresenter : BasePresenter<MapView>() {
 
     @Inject
-    lateinit var mapInteractor: IMapInteractor
-//    lateinit var dataBaseRepository: DataBaseRepository
+    lateinit var mapInteractor: MapInteractor
+
+    @Inject
+    lateinit var buttonControlInteractorImpl: ButtonControlInteractorImpl
+
+    @Inject
+    lateinit var locationInteractorImpl: LocationInteractorImpl
 
     @Inject
     lateinit var appContext: Context
 
-//    @Inject
-//    lateinit var locationService: LocationService
+    @Inject
+    lateinit var tracker: Tracker
 
     private var points = mutableListOf<LatLng>()
-
-    private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val bundle = intent.getBundleExtra(LOCATION)
-            val lastLocation = bundle?.getParcelable<Parcelable>(LOCATION_BUNDLE) as MintLocation?
-
-            if (lastLocation != null) {
-                showTracking(lastLocation)
-            }
-        }
-    }
+    private val currentLocationDisposable = SerialDisposable()
 
     init {
         App.instance.appComponent.injectMapPresenter(this)
     }
 
-    private fun showTracking(lastLocation: MintLocation) {
-        viewState?.showData(lastLocation)
-        viewState?.showLocation(Pair(lastLocation.lat, lastLocation.lon))
-        points.add(lastLocation.latLng)
-        viewState.updatePolyline(points)
-    }
-
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState?.requireLocationPermission()
+        getPointsForPolyline()
         println("onFirstViewAttach Nata")
     }
 
-    fun appIsResumed() {
-        getPointsForPolyline()
-        LocalBroadcastManager.getInstance(appContext).registerReceiver(
-            messageReceiver, IntentFilter(LOCATION_UPDATES)
-        )
-    }
-
     private fun getPointsForPolyline() {
-        mapInteractor.getLastTrack()
+        tracker.location
             .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
             .subscribe({
-                if (it.status != STATUS_FINISHED) {
-                    showLastData(it)
-                }
+                points.add(it.latLng)
+                viewState?.updatePolyline(points)
             }, {
                 it.printStackTrace()
             })
             .addDisposable()
-    }
-
-    fun appIsPaused() {
-        //todo переделать
-        LocalBroadcastManager.getInstance(appContext).unregisterReceiver(messageReceiver)
     }
 
     fun permissionGranted(granted: Boolean) {
@@ -106,24 +72,23 @@ class MapPresenter : BasePresenter<MapView>() {
 
     private fun setInitialState() {
         mapInteractor.getLastTrack()
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .doOnSuccess {
+            .flatMap {
                 if (it.status != STATUS_FINISHED) {
-                    mapInteractor.updateTrack(Track(it.id, it.date, STATUS_PAUSED))
-                    stateOfButtons(start = false, pause = false, resume = true, stop = true)
-                    showLastData(it)
+                    mapInteractor.updateTrack(it.copy(status = STATUS_PAUSED))
                 } else {
-                    stateOfButtons(start = true, pause = false, resume = false, stop = false)
-                    showMyCurrentLocation()
+                    Single.just(it)
                 }
             }
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-
+                if (it.status != STATUS_FINISHED) {
+                    showLastData(it)
+                }
+                stateOfButtons(buttonControlInteractorImpl.controlButtonPressed(it.status))
+                showMyCurrentLocation()
             }, {
-                stateOfButtons(start = true, pause = false, resume = false, stop = false)
+                stateOfButtons(buttonControlInteractorImpl.controlButtonPressed(STATUS_FINISHED))
                 showMyCurrentLocation()
                 it.printStackTrace()
             })
@@ -135,12 +100,9 @@ class MapPresenter : BasePresenter<MapView>() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ mintLocations ->
-                if (mintLocations.size > 1) {
-                    viewState?.showData(mintLocations[mintLocations.size - 1])
-                    viewState?.showLocation(Pair(mintLocations[mintLocations.size - 1].lat, mintLocations[mintLocations.size - 1].lon))
-                    points.addAll(mintLocations.map { it.latLng })
-                    viewState?.updatePolyline(points)
-                }
+                points.clear()
+                points.addAll(mintLocations.map { it.latLng })
+                viewState?.updatePolyline(points)
             }, {
                 it.printStackTrace()
             })
@@ -148,64 +110,44 @@ class MapPresenter : BasePresenter<MapView>() {
     }
 
     private fun showMyCurrentLocation() {
-        mapInteractor.getLocation()
-//            .observeOn(Schedulers.io())
-//            .map { location ->
-//                MintLocation(0, 0, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy)
-//            }
+         locationInteractorImpl.getLocation()
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ lastLocation ->
                 viewState?.showData(lastLocation)
-                viewState?.showLocation(Pair(lastLocation.lat, lastLocation.lon))
+                viewState?.moveCamera(lastLocation.latLng)
             }, {
                 it.printStackTrace()
             })
-            .addDisposable()
+            .addDisposable(currentLocationDisposable)
     }
 
-    fun startButtonPressed() {
-        points = mutableListOf()
-        viewState?.updatePolyline(points)
-        stateOfButtons(start = false, pause = true, resume = false, stop = true)
-        startLocationService(true, STATUS_STARTED)
+    fun controlButtonPressed(str: String) {
+        stateOfButtons(buttonControlInteractorImpl.controlButtonPressed(str))
+        buttonControlInteractorImpl.start(str)
+        if (str == STATUS_STARTED) {
+            points = mutableListOf()
+            viewState?.updatePolyline(points)
+        }
     }
 
-    fun pauseButtonPressed() {
-        stateOfButtons(start = false, pause = false, resume = true, stop = true)
-        startLocationService(false, STATUS_PAUSED)
-    }
-
-    fun resumeButtonPressed() {
-        stateOfButtons(start = false, pause = true, resume = false, stop = true)
-        startLocationService(true, STATUS_RESUMED)
-    }
-
-    fun stopButtonPressed() {
-        stateOfButtons(start = true, pause = false, resume = false, stop = false)
-        startLocationService(false, STATUS_FINISHED)
-    }
-
-    private fun stateOfButtons(start: Boolean, pause: Boolean, resume: Boolean, stop: Boolean) {
-        viewState?.visibilityStartButton(start)
-        viewState?.visibilityPauseButton(pause)
-        viewState?.visibilityResumeButton(resume)
-        viewState?.visibilityStopButton(stop)
+    private fun stateOfButtons(buttonState: ButtonState) {
+        viewState?.visibilityStartButton(buttonState.start)
+        viewState?.visibilityPauseButton(buttonState.pause)
+        viewState?.visibilityResumeButton(buttonState.resume)
+        viewState?.visibilityStopButton(buttonState.stop)
     }
 
     fun historyButtonPressed() {
         viewState?.navigateToHistoryFragment()
     }
 
-    private fun startLocationService(run: Boolean, status: String) {
-        val serviceIntent = Intent(appContext, LocationServiceForeground::class.java).apply {
-            putExtra(STATUS, status)
-            action = if (run) {
-                LocationServiceForeground.ACTION_START_FOREGROUND_SERVICE
-            } else {
-                LocationServiceForeground.ACTION_STOP_FOREGROUND_SERVICE
-            }
-        }
-        ContextCompat.startForegroundService(appContext, serviceIntent)
+    fun myLocationButtonIsClicked() {
+        showMyCurrentLocation()
+    }
+
+    fun cameraIsMovedByGesture() {
+        currentLocationDisposable.set(null)
     }
 
     companion object {
@@ -213,6 +155,5 @@ class MapPresenter : BasePresenter<MapView>() {
         const val STATUS_PAUSED = "STATUS_PAUSED"
         const val STATUS_RESUMED = "STATUS_RESUMED"
         const val STATUS_FINISHED = "STATUS_FINISHED"
-        const val LOCATION = "LOCATION"
     }
 }

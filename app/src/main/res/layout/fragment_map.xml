@@ -20,8 +20,7 @@
             android:layout_height="?attr/actionBarSize"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:title="@string/app_name"
-            app:titleTextColor="@color/white"
-            />
+            app:titleTextColor="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -237,46 +236,46 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Button
-            android:id="@+id/pause"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            app:layout_constraintEnd_toStartOf="@id/stop"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics"
-            tools:text="Pause" />
-
-        <Button
-            android:id="@+id/resume"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            app:layout_constraintEnd_toStartOf="@id/stop"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics"
-            tools:text="Resume" />
-
-        <Button
+        <ImageButton
             android:id="@+id/start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_marginTop="72dp"
-            app:layout_constraintEnd_toStartOf="@id/stop"
+            android:src="@drawable/ic_round_play_arrow_24"
+            app:layout_constraintEnd_toStartOf="@id/pause"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics"
-            tools:text="Start" />
+            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics" />
+        <ImageButton
+            android:id="@+id/pause"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:src="@drawable/ic_round_pause_24"
+            app:layout_constraintEnd_toStartOf="@id/resume"
+            app:layout_constraintStart_toEndOf="@id/start"
+            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics" />
 
-        <Button
+        <ImageButton
+            android:id="@+id/resume"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:src="@drawable/ic_round_replay_24"
+            app:layout_constraintEnd_toStartOf="@id/stop"
+            app:layout_constraintStart_toEndOf="@id/pause"
+            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics" />
+
+
+        <ImageButton
             android:id="@+id/stop"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
+            android:src="@drawable/ic_round_stop_24"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/start"
-            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics"
-            tools:text="Stop" />
+            app:layout_constraintStart_toEndOf="@id/resume"
+            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics" />
 
         <Button
             android:id="@+id/history"

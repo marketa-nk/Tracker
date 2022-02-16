@@ -9,12 +9,13 @@ import javax.inject.Inject
 
 class DataBaseRepository @Inject constructor(
     private val tracksDao: TracksDao,
-    private val locationDao: MintLocationDao
-) : IDataBaseRepository{
+    private val locationDao: MintLocationDao,
+) : IDataBaseRepository {
 
-    override fun saveLocation(mintLocation: MintLocation): Single<MintLocation> {
-        return locationDao.insertMintLocation(mintLocation)
+    override fun saveLocation(mintLocation: MintLocation, trackId: Long): Single<MintLocation> {
+        return locationDao.insertMintLocation(mintLocation.copy(idTrack = trackId))
             .map { mintLocation.copy(id = it) }
+            .doOnSuccess { println("nata - saved $it") }
     }
 
     override fun getAllLocationsById(id: Long): Single<List<MintLocation>> {
@@ -26,8 +27,11 @@ class DataBaseRepository @Inject constructor(
             .doOnSuccess { println("Track created - Nata") }
     }
 
-    override fun updateTrack(track: Track) {
-        tracksDao.updateTrack(track).also { println("${track.status}") }
+    override fun updateTrack(track: Track): Single<Track> {
+        return tracksDao.updateTrack(track)
+            .andThen(Single.just(track))
+            .doOnSuccess { println("Track updated - Nata") }
+
     }
 
     override fun getLastTrack(): Single<Track> {
@@ -39,10 +43,12 @@ class DataBaseRepository @Inject constructor(
         return tracksDao.getAllTracks()
             .doOnNext { println("You've got all tracks - Nata") }
     }
+
     override fun deleteTrack(track: Track): Single<Int> {
         return tracksDao.deleteTrack(track).also { println("$track is deleted - Nata") }
     }
-    override fun getTrackById(id: Long): Single<Track>{
-       return tracksDao.getTrackByID(id)
+
+    override fun getTrackById(id: Long): Single<Track> {
+        return tracksDao.getTrackByID(id)
     }
 }

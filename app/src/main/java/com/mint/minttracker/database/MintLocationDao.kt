@@ -2,6 +2,7 @@ package com.mint.minttracker.database
 
 import androidx.room.*
 import com.mint.minttracker.models.MintLocation
+import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao
@@ -18,6 +19,9 @@ interface MintLocationDao {
 
     @Query("SELECT * FROM mintLocation WHERE idTrack = :id")
     fun getAllRecordsByID(id: Long): Single<List<MintLocation>>
+
+    @Query("SELECT * FROM mintLocation WHERE idTrack = :id")
+    fun getAllRecordsByIDTrack(id: Long): Observable<List<MintLocation>>
 
     @Query("SELECT * FROM mintLocation WHERE idTrack = :id")
     fun getLastRecordByTrackId(id: Long): Single<MintLocation>

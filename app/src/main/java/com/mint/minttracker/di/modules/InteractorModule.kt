@@ -1,33 +1,54 @@
 package com.mint.minttracker.di.modules
 
-import com.mint.minttracker.database.DataBaseRepository
+import android.content.Context
 import com.mint.minttracker.database.IDataBaseRepository
 import com.mint.minttracker.di.components.AppScope
+import com.mint.minttracker.domain.buttonControl.ButtonControlInteractorImpl
+import com.mint.minttracker.domain.location.LocationInteractorImpl
+import com.mint.minttracker.domain.buttonControl.ButtonControlInteractor
+import com.mint.minttracker.domain.history.HistoryInteractorImpl
 import com.mint.minttracker.domain.history.HistoryInteractor
-import com.mint.minttracker.domain.history.IHistoryInteractor
-import com.mint.minttracker.domain.map.IMapInteractor
+import com.mint.minttracker.domain.location.LocationInteractor
 import com.mint.minttracker.domain.map.MapInteractor
-import com.mint.minttracker.domain.record.IRecordInteractor
+import com.mint.minttracker.domain.map.MapInteractorImpl
 import com.mint.minttracker.domain.record.RecordInteractor
-import com.mint.minttracker.services.LocationService
+import com.mint.minttracker.domain.record.RecordInteractorImpl
+import com.mint.minttracker.locationRepository.LocationRepository
+import com.mint.minttracker.locationRepository.LocationService
 import dagger.Module
 import dagger.Provides
 
 @Module
 class InteractorModule() {
-    @AppScope
+
     @Provides
-    fun provideIHistoryInteractor(dataBaseRepository: IDataBaseRepository): IHistoryInteractor {
-        return HistoryInteractor(dataBaseRepository)
+    fun provideHistoryInteractor(dataBaseRepository: IDataBaseRepository): HistoryInteractor {
+        return HistoryInteractorImpl(dataBaseRepository)
     }
-    @AppScope
+
     @Provides
-    fun provideIRecordInteractor(dataBaseRepository: IDataBaseRepository): IRecordInteractor {
-        return RecordInteractor(dataBaseRepository)
+    fun provideIRecordInteractor(dataBaseRepository: IDataBaseRepository): RecordInteractor {
+        return RecordInteractorImpl(dataBaseRepository)
     }
+
+    @Provides
+    fun provideIMapInteractor(dataBaseRepository: IDataBaseRepository, locationService: LocationRepository): MapInteractor {
+        return MapInteractorImpl(dataBaseRepository)
+    }
+
+    @Provides
+    fun provideButtonControlInteractor(appContext: Context): ButtonControlInteractor {
+        return ButtonControlInteractorImpl(appContext)
+    }
+
+    @Provides
+    fun provideLocationInteractor(locationService: LocationRepository): LocationInteractor {
+        return LocationInteractorImpl(locationService)
+    }
+
     @AppScope
     @Provides
-    fun provideIMapInteractor(dataBaseRepository: IDataBaseRepository, locationService: LocationService): IMapInteractor {
-        return MapInteractor(dataBaseRepository, locationService)
+    fun provideLocationRepository(context: Context): LocationRepository {
+        return LocationService(context)
     }
 }

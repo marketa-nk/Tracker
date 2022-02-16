@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 
 @Entity
-class Track(
+data class Track(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val date: Long,

@@ -30,7 +30,7 @@
         </activity>
 
         <service
-            android:name=".mapFragment.LocationServiceForeground"
+            android:name=".services.LocationServiceForeground"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="location">

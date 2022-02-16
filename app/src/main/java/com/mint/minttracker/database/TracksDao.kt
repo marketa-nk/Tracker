@@ -2,6 +2,7 @@ package com.mint.minttracker.database
 
 import androidx.room.*
 import com.mint.minttracker.models.Track
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -12,13 +13,10 @@ interface TracksDao {
     fun insertTrack(track: Track): Single<Long>
 
     @Update
-    fun updateTrack(track: Track)
+    fun updateTrack(track: Track): Completable
 
     @Delete
     fun deleteTrack(track: Track): Single<Int>
-
-    @Query("SELECT COUNT(id) FROM track")
-    fun getCount(): Int
 
     @Query("SELECT id FROM track ORDER BY id DESC LIMIT 1")
     fun getLastTrackId(): Single<Long>

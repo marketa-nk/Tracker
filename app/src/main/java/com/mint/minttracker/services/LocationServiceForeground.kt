@@ -1,4 +1,4 @@
-package com.mint.minttracker.mapFragment
+package com.mint.minttracker.services
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -13,17 +13,15 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.mint.minttracker.MainActivity
 import com.mint.minttracker.R
-import com.mint.minttracker.services.Tracker
 import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
 import com.mint.minttracker.App
 import javax.inject.Inject
 
 class LocationServiceForeground : Service() {
 
-    private val CHANNEL_ID = "ForegroundServiceChannel"
     @Inject
     lateinit var tracker: Tracker
-    private var status: String? = null
+
     private var serviceStarted = false
 
     override fun onCreate() {
@@ -33,11 +31,11 @@ class LocationServiceForeground : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
-            status = intent.getStringExtra(STATUS)
+            val status = intent.getStringExtra(STATUS)
             if (status != null) {
                 when (intent.action) {
-                    ACTION_START_FOREGROUND_SERVICE -> startForegroundService(status!!)
-                    ACTION_STOP_FOREGROUND_SERVICE -> stopForegroundService(status!!)
+                    ACTION_START_FOREGROUND_SERVICE -> startForegroundService(status)
+                    ACTION_STOP_FOREGROUND_SERVICE -> stopForegroundService(status)
                     ACTION_PLAY -> Toast.makeText(applicationContext, "You click Play button.", Toast.LENGTH_LONG).show()
                     ACTION_PAUSE -> Toast.makeText(applicationContext, "You click Pause button.", Toast.LENGTH_LONG).show()
                 }
@@ -51,6 +49,12 @@ class LocationServiceForeground : Service() {
     }
 
     private fun startForegroundService(status: String) {
+        startForeground(1, createNotification().build())
+        tracker.start(status)
+        serviceStarted = true
+    }
+
+    private fun createNotification(): NotificationCompat.Builder {
         createNotificationChannel()
         val pendingIntent = PendingIntent.getActivity(this, 0, Intent(), 0)
         // Create notification builder.
@@ -58,7 +62,7 @@ class LocationServiceForeground : Service() {
             .setBigContentTitle("MintTracker implemented by foreground service.")
             .bigText("Android foreground service is a android service which can run in foreground always, it can be controlled by user via notification.");
 
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(this, FOREGROUND_SERVICE_CHANNEL)
             .setStyle(bigTextStyle)
             .setWhen(System.currentTimeMillis())
             .setSmallIcon(R.drawable.ic_outline_gps_not_fixed_24)
@@ -68,7 +72,7 @@ class LocationServiceForeground : Service() {
         val notificationIntent = Intent(this, MainActivity::class.java)
         notificationIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
         notificationIntent.addFlags(FLAG_ACTIVITY_SINGLE_TOP)
-        val contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0 )
+        val contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
         notification.setContentIntent(contentIntent)
 
         // Add Play button intent in notification.
@@ -83,11 +87,7 @@ class LocationServiceForeground : Service() {
         val pendingPrevIntent = PendingIntent.getService(this, 0, pauseIntent, 0)
         notification.addAction(NotificationCompat.Action(android.R.drawable.ic_media_pause, "Pause", pendingPrevIntent))
 
-        // Build the notification.
-        // Start foreground service.
-        startForeground(1, notification.build())
-        tracker.start(status)
-        serviceStarted = true
+        return notification
     }
 
     private fun stopForegroundService(status: String) {
@@ -102,7 +102,7 @@ class LocationServiceForeground : Service() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
-                CHANNEL_ID,
+                FOREGROUND_SERVICE_CHANNEL,
                 "Foreground Service Channel",
                 NotificationManager.IMPORTANCE_HIGH
             )
@@ -117,10 +117,11 @@ class LocationServiceForeground : Service() {
         const val ACTION_PAUSE = "ACTION_PAUSE"
         const val ACTION_PLAY = "ACTION_PLAY"
         const val STATUS = "STATUS"
+        const val FOREGROUND_SERVICE_CHANNEL = "FOREGROUND_SERVICE_CHANNEL"
     }
 
     override fun onDestroy() {
-        tracker.compositeDisposable.dispose()
+        tracker.onDestroy()
         super.onDestroy()
     }
 }

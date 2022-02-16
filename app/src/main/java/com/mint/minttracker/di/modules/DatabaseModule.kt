@@ -9,6 +9,7 @@ import com.mint.minttracker.di.components.AppScope
 
 @Module
 class DatabaseModule (private val context: Context) {
+
     @AppScope
     @Provides
     fun provideDatabase(): AppDatabase {
@@ -16,17 +17,16 @@ class DatabaseModule (private val context: Context) {
             .build()
     }
 
-    @AppScope
     @Provides
     fun provideTracksDao(database: AppDatabase): TracksDao {
         return database.tracksDao()
     }
 
-    @AppScope
     @Provides
     fun provideMintLocationDao(database: AppDatabase): MintLocationDao {
         return database.mintLocationDao()
     }
+
     @AppScope
     @Provides
     fun provideDatabaseRepository(tracksDao: TracksDao, locationDao: MintLocationDao): IDataBaseRepository {

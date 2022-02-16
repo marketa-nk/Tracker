@@ -16,7 +16,7 @@ interface MapView: MvpView{
     fun requireLocationPermission()
     fun updatePolyline(points: List<LatLng>)
     fun showData(mintLocation: MintLocation)
-    fun showLocation(location: Pair<Double, Double>)
+    fun moveCamera(location: LatLng)
 
     fun visibilityStartButton(visibility: Boolean)
     fun visibilityPauseButton(visibility: Boolean)

@@ -37,7 +37,7 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentRecordBinding.inflate(inflater, container, false)
 
@@ -48,6 +48,9 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
         if (record != null) {
             recordPresenter.readyToShowRecord(record)
         }
+
+        binding.myToolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+
         return binding.root
     }
 
@@ -78,12 +81,11 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
     override fun showPolyline(list: List<LatLng>) {
         addPolyline()
         polyline?.points = list
-        val builder = LatLngBounds.Builder()
-        list.forEach {
-            builder.include(it)
-        }
-        val bounds = builder.build()
 
+        val bounds = LatLngBounds.Builder()
+            .also { builder ->
+                list.forEach { builder.include(it) }
+            }.build()
         map?.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50))
     }
 

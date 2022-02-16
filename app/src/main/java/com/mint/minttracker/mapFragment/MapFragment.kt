@@ -25,6 +25,10 @@ import com.google.android.gms.maps.model.*
 import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.historyFragment.round
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_FINISHED
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_PAUSED
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_RESUMED
+import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
 import java.text.DateFormat
 
@@ -66,20 +70,19 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         binding.mapView.onResume()
-        mapPresenter.appIsResumed()
         println("onResume Nata")
     }
 
     override fun onPause() {
         super.onPause()
         binding.mapView.onPause()
-        mapPresenter.appIsPaused()
+//        mapPresenter.appIsPaused()
         println("onPause Nata")
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
 
@@ -94,21 +97,25 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
         binding.bearingText.text = getString(R.string.bearing)
         binding.accuracyText.text = getString(R.string.accuracy)
 
-        binding.start.text = getString(R.string.start)
         binding.start.setOnClickListener {
-            mapPresenter.startButtonPressed()
+//            mapPresenter.startButtonPressed()
+            mapPresenter.controlButtonPressed(STATUS_STARTED)
+
         }
-        binding.pause.text = getString(R.string.pause)
         binding.pause.setOnClickListener {
-            mapPresenter.pauseButtonPressed()
+//            mapPresenter.pauseButtonPressed()
+            mapPresenter.controlButtonPressed(STATUS_PAUSED)
+
         }
-        binding.resume.text = getString(R.string.resume)
         binding.resume.setOnClickListener {
-            mapPresenter.resumeButtonPressed()
+//            mapPresenter.resumeButtonPressed()
+            mapPresenter.controlButtonPressed(STATUS_RESUMED)
+
         }
-        binding.stop.text = getString(R.string.stop)
         binding.stop.setOnClickListener {
-            mapPresenter.stopButtonPressed()
+//            mapPresenter.stopButtonPressed()
+            mapPresenter.controlButtonPressed(STATUS_FINISHED)
+
         }
         binding.history.setOnClickListener {
             mapPresenter.historyButtonPressed()
@@ -148,10 +155,20 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap.apply {
             isMyLocationEnabled = !(ActivityCompat.checkSelfPermission(requireContext().applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext().applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            uiSettings.isMyLocationButtonEnabled = true
             uiSettings.isZoomControlsEnabled = true
+            uiSettings.isCompassEnabled = true
+            setOnMyLocationButtonClickListener {
+                mapPresenter.myLocationButtonIsClicked()
+                false
+            }
+            setOnCameraMoveStartedListener {
+                if (it == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                    mapPresenter.cameraIsMovedByGesture()
+                }
+            }
         }
         addPolyline()
-
     }
 
     private fun addPolyline() {
@@ -166,8 +183,8 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
         polyline?.points = points
     }
 
-    private fun View.changeVisibility(visibility: Boolean) {
-        this.visibility = if (visibility) View.VISIBLE else View.INVISIBLE
+    private fun View.changeVisibility(enabled: Boolean) {
+        this.isEnabled = enabled
     }
 
     override fun visibilityStartButton(visibility: Boolean) {
@@ -189,20 +206,19 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
     override fun showData(mintLocation: MintLocation) {
         binding.timeData.text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(mintLocation.time)
         binding.latitudeData.text = "${(mintLocation.lat)}"
-        binding.longitudeData.text ="${(mintLocation.lon)}"
-        binding.altitudeData.text ="${(mintLocation.altitude).round()}"
+        binding.longitudeData.text = "${(mintLocation.lon)}"
+        binding.altitudeData.text = "${(mintLocation.altitude).round()}"
         binding.speedData.text = "${(mintLocation.speedInKm).toDouble().round()}"
         binding.bearingData.text = "${(mintLocation.bearing.toDouble()).round()}"
-        binding.accuracyData.text ="${(mintLocation.accuracy.toDouble()).round()}"
+        binding.accuracyData.text = "${(mintLocation.accuracy.toDouble()).round()}"
     }
 
     override fun navigateToHistoryFragment() {
         binding.root.findNavController().navigate(R.id.action_fragment_map_to_historyFragment)
     }
 
-    override fun showLocation(location: Pair<Double, Double>) {
-        val loc = LatLng(location.first, location.second)
-        map?.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 17.0f))
+    override fun moveCamera(location: LatLng) {
+        map?.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 17.0f))
     }
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
@@ -237,6 +253,4 @@ class MapFragment : MvpAppCompatFragment(), MapView, OnMapReadyCallback {
         println("onDestroy Nata")
 
     }
-
-
 }
