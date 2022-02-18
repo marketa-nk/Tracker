@@ -1,54 +1,27 @@
 package com.mint.minttracker.database
 
-import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
 import io.reactivex.Observable
 import io.reactivex.Single
-import javax.inject.Inject
 
-class DataBaseRepository @Inject constructor(
-    private val tracksDao: TracksDao,
-    private val locationDao: MintLocationDao,
-) : IDataBaseRepository {
+interface DataBaseRepository {
 
-    override fun saveLocation(mintLocation: MintLocation, trackId: Long): Single<MintLocation> {
-        return locationDao.insertMintLocation(mintLocation.copy(idTrack = trackId))
-            .map { mintLocation.copy(id = it) }
-            .doOnSuccess { println("nata - saved $it") }
-    }
+    fun saveLocation(mintLocation: MintLocation, trackId: Long): Single<MintLocation>
 
-    override fun getAllLocationsById(id: Long): Single<List<MintLocation>> {
-        return locationDao.getAllRecordsByID(id)
-    }
+    fun getAllLocationsById(id: Long): Single<List<MintLocation>>
 
-    override fun createTrack(): Single<Long> {
-        return tracksDao.insertTrack(Track(0, System.currentTimeMillis(), STATUS_STARTED))
-            .doOnSuccess { println("Track created - Nata") }
-    }
+    fun createTrack(): Single<Long>
 
-    override fun updateTrack(track: Track): Single<Track> {
-        return tracksDao.updateTrack(track)
-            .andThen(Single.just(track))
-            .doOnSuccess { println("Track updated - Nata") }
+    fun updateTrack(track: Track): Single<Track>
 
-    }
+    fun getLastTrack(): Single<Track>
 
-    override fun getLastTrack(): Single<Track> {
-        return tracksDao.getLastTrack()
-            .doOnSuccess { println("Track got last one track - Nata") }
-    }
+    fun getAllTracks(): Observable<List<Track>>
 
-    override fun getAllTracks(): Observable<List<Track>> {
-        return tracksDao.getAllTracks()
-            .doOnNext { println("You've got all tracks - Nata") }
-    }
+    fun deleteTrack(track: Track): Single<Int>
 
-    override fun deleteTrack(track: Track): Single<Int> {
-        return tracksDao.deleteTrack(track).also { println("$track is deleted - Nata") }
-    }
+    fun getTrackById(id: Long): Single<Track>
 
-    override fun getTrackById(id: Long): Single<Track> {
-        return tracksDao.getTrackByID(id)
-    }
+    fun getTrackAndLocations(): Observable<Map<Track, List<MintLocation>>>
 }

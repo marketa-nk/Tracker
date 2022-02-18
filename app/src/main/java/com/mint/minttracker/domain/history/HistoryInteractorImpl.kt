@@ -1,8 +1,7 @@
 package com.mint.minttracker.domain.history
 
 import android.location.Location
-import com.mint.minttracker.database.IDataBaseRepository
-import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_FINISHED
+import com.mint.minttracker.database.DataBaseRepository
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Record
 import io.reactivex.Observable
@@ -10,19 +9,32 @@ import io.reactivex.Single
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: IDataBaseRepository): HistoryInteractor {
+class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: DataBaseRepository) : HistoryInteractor {
 
     override fun loadHistory(): Observable<List<Record>> {
-        return dataBaseRepository.getAllTracks()
-            .map { it.filter { track -> track.status == STATUS_FINISHED } }
-            .switchMap {
-                Observable.fromIterable(it)
-                    .flatMapSingle { track ->
-                        println("Track ${track.id} $track - nata")
-                        getRecord(track.id)
+        return dataBaseRepository.getTrackAndLocations()
+            .map { values ->
+                values.map {
+                    if (it.value.isEmpty()) {
+                        Record(
+                            idTrack = it.key.id,
+                            date = 0,
+                            distance = 0.0,
+                            totalTimeMs = 0,
+                            aveSpeed = 0.0,
+                            maxSpeed = 0f
+                        )
+                    } else {
+                        Record(
+                            idTrack = it.key.id,
+                            date = it.value.first().time,
+                            distance = getDistance(it.value),
+                            totalTimeMs = it.value.last().time - it.value.first().time,
+                            aveSpeed = it.value.map { it.speedInKm }.average(),
+                            maxSpeed = it.value.maxOf { it.speedInKm }
+                        )
                     }
-                    .toList()
-                    .toObservable()
+                }
             }
     }
 
@@ -30,32 +42,6 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
         return dataBaseRepository.getTrackById(record.idTrack)
             .flatMap {
                 dataBaseRepository.deleteTrack(it)
-            }
-    }
-
-    private fun getRecord(id: Long): Single<Record> {
-        return dataBaseRepository.getAllLocationsById(id)
-            .map {
-                if (it.isEmpty()) {
-                    Record(
-                        idTrack = id,
-                        date = 0,
-                        distance = 0.0,
-                        totalTimeMs = 0,
-                        aveSpeed = 0.0,
-                        maxSpeed = 0f
-                    )
-                } else {
-                    Record(
-                        idTrack = id,
-                        date = it.first().time,
-                        distance = getDistance(it),
-                        totalTimeMs = it.last().time - it.first().time,
-                        aveSpeed = it.map { it.speedInKm }.average(),
-                        maxSpeed = it.maxOf { it.speedInKm }
-
-                    )
-                }
             }
     }
 

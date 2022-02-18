@@ -37,41 +37,11 @@ class HistoryPresenter : BasePresenter<HistoryView>() {
             .addDisposable()
     }
 
-//    private fun getRecord(id: Long): Single<Record> {
-//        return dataBaseRepository.getAllLocationsById(id)
-//            .map {
-//                if (it.isEmpty()) {
-//                    Record(
-//                        idTrack = id,
-//                        date = 0,
-//                        distance = 0.0,
-//                        totalTimeMs = 0,
-//                        aveSpeed = 0.0,
-//                        maxSpeed = 0f
-//                    )
-//                } else {
-//                    Record(
-//                        idTrack = id,
-//                        date = it.first().time,
-//                        distance = getDistance(it),
-//                        totalTimeMs = it.last().time - it.first().time,
-//                        aveSpeed = it.map { it.speedInKm }.average(),
-//                        maxSpeed = it.maxOf { it.speedInKm }
-//
-//                    )
-//                }
-//            }
-//    }
-
     fun recordClicked(record: Record) {
         viewState?.showRecordFragment(record)
     }
 
     fun deleteRecordButtonClicked(record: Record) {
-//        dataBaseRepository.getTrackById(record.idTrack)
-//            .flatMap {
-//                dataBaseRepository.deleteTrack(it)
-//            }
         historyInteractor.deleteRecord(record)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -82,24 +52,6 @@ class HistoryPresenter : BasePresenter<HistoryView>() {
             })
             .addDisposable()
     }
-
-//    private fun getDistance(list: List<MintLocation>): Double {
-//        val locationList = list.map { mintLocation ->
-//            Location("loc").also { location ->
-//                location.latitude = mintLocation.lat
-//                location.longitude = mintLocation.lon
-//            }
-//        }
-//        var distance = 0.0
-//        for (i in 0 until locationList.size - 1) {
-//            distance += getDistanceBetweenMeters(locationList[i], locationList[i + 1])
-//        }
-//        return distance
-//    }
-//
-//    private fun getDistanceBetweenMeters(first: Location, next: Location): Double {
-//        return (first.distanceTo(next)).toBigDecimal().setScale(2, ROUND_HALF_UP).toDouble()
-//    }
 }
 
 

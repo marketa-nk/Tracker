@@ -1,7 +1,7 @@
 package com.mint.minttracker.di.modules
 
 import android.content.Context
-import com.mint.minttracker.database.IDataBaseRepository
+import com.mint.minttracker.database.DataBaseRepository
 import com.mint.minttracker.di.components.AppScope
 import com.mint.minttracker.domain.buttonControl.ButtonControlInteractorImpl
 import com.mint.minttracker.domain.location.LocationInteractorImpl
@@ -22,17 +22,17 @@ import dagger.Provides
 class InteractorModule() {
 
     @Provides
-    fun provideHistoryInteractor(dataBaseRepository: IDataBaseRepository): HistoryInteractor {
+    fun provideHistoryInteractor(dataBaseRepository: DataBaseRepository): HistoryInteractor {
         return HistoryInteractorImpl(dataBaseRepository)
     }
 
     @Provides
-    fun provideIRecordInteractor(dataBaseRepository: IDataBaseRepository): RecordInteractor {
+    fun provideIRecordInteractor(dataBaseRepository: DataBaseRepository): RecordInteractor {
         return RecordInteractorImpl(dataBaseRepository)
     }
 
     @Provides
-    fun provideIMapInteractor(dataBaseRepository: IDataBaseRepository, locationService: LocationRepository): MapInteractor {
+    fun provideIMapInteractor(dataBaseRepository: DataBaseRepository, locationService: LocationRepository): MapInteractor {
         return MapInteractorImpl(dataBaseRepository)
     }
 

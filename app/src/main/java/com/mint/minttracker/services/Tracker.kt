@@ -1,6 +1,6 @@
 package com.mint.minttracker.services
 
-import com.mint.minttracker.database.IDataBaseRepository
+import com.mint.minttracker.database.DataBaseRepository
 import com.mint.minttracker.di.components.AppScope
 import com.mint.minttracker.domain.location.LocationInteractorImpl
 import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_FINISHED
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @AppScope
 class Tracker @Inject constructor(
-    private val dataBaseRepository: IDataBaseRepository,
+    private val dataBaseRepository: DataBaseRepository,
     private val locationInteractorImpl: LocationInteractorImpl,
 ) {
 

@@ -5,6 +5,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 
 interface HistoryInteractor {
+
     fun loadHistory(): Observable<List<Record>>
+
     fun deleteRecord(record: Record): Single<Int>
 }

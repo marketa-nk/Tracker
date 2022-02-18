@@ -17,6 +17,12 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
@@ -66,9 +72,9 @@ dependencies {
     kapt 'com.arello-mobile:moxy-compiler:1.5.5'
     implementation 'com.arello-mobile:moxy:1.5.5'
 
-    implementation 'androidx.room:room-runtime:2.4.0'
-    implementation "androidx.room:room-rxjava2:2.4.0"
-    kapt "androidx.room:room-compiler:2.4.0"
+    implementation 'androidx.room:room-runtime:2.4.1'
+    implementation "androidx.room:room-rxjava2:2.4.1"
+    kapt "androidx.room:room-compiler:2.4.1"
 
     kapt "com.google.dagger:dagger-compiler:2.40.5"
     implementation "com.google.dagger:dagger:2.40.5"
