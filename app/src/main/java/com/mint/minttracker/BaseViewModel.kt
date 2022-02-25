@@ -1,12 +1,11 @@
 package com.mint.minttracker
 
-import com.arellomobile.mvp.MvpPresenter
-import com.arellomobile.mvp.MvpView
+import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.SerialDisposable
 
-open class BasePresenter<T : MvpView> : MvpPresenter<T>() {
+open class BaseViewModel: ViewModel()  {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -21,8 +20,9 @@ open class BasePresenter<T : MvpView> : MvpPresenter<T>() {
         return this
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onCleared() {
         compositeDisposable.dispose()
+        super.onCleared()
+
     }
 }

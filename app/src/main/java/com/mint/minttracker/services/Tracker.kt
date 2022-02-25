@@ -3,9 +3,9 @@ package com.mint.minttracker.services
 import com.mint.minttracker.database.DataBaseRepository
 import com.mint.minttracker.di.components.AppScope
 import com.mint.minttracker.domain.location.LocationInteractorImpl
-import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_FINISHED
-import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_RESUMED
-import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_STARTED
+import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_FINISHED
+import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_RESUMED
+import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
 import io.reactivex.Observable

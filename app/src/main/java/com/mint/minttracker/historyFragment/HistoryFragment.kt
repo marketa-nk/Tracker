@@ -2,25 +2,27 @@ package com.mint.minttracker.historyFragment
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arellomobile.mvp.MvpAppCompatFragment
-import com.arellomobile.mvp.presenter.InjectPresenter
+import com.mint.minttracker.App
 import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentHistoryBinding
 import com.mint.minttracker.models.Record
 import com.mint.minttracker.recordFragment.RecordFragment
+import javax.inject.Inject
 
-class HistoryFragment : MvpAppCompatFragment(), HistoryView {
-    @InjectPresenter
-    lateinit var historyPresenter: HistoryPresenter
+class HistoryFragment : Fragment() {
 
-    init {
-        println("historyFragment created - Nata")
-    }
+    @Inject
+    lateinit var factory: HistoryViewModel.HistoryViewModelFactory
+
+    private val viewModel: HistoryViewModel by viewModels { factory }
 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
@@ -29,17 +31,28 @@ class HistoryFragment : MvpAppCompatFragment(), HistoryView {
 
     private val recordsAdapter = RecordsAdapter()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        App.instance.appComponent.injectHistoryFragment(this)
+
+        viewModel.records.observe(this, { records -> showHistory(records) })
+        viewModel.recordData.observe(this, { rec -> showRecordFragment(rec) })
+        viewModel.message.observe(this, { message -> showToast(message) })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.recyclerView.adapter = recordsAdapter
+
         recordsAdapter.recordListener = object : RecordsAdapter.OnRecordClickListener {
             override fun onItemClick(record: Record) {
-                historyPresenter.recordClicked(record)
+                viewModel.recordClicked(record)
             }
 
             override fun onItemLongClick(record: Record): Boolean {
@@ -59,7 +72,7 @@ class HistoryFragment : MvpAppCompatFragment(), HistoryView {
                     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
                         return when (item.itemId) {
                             R.id.delete_record -> {
-                                historyPresenter.deleteRecordButtonClicked(record)
+                                viewModel.deleteRecordButtonClicked(record)
                                 mode.finish()
                                 true
                             }
@@ -70,7 +83,6 @@ class HistoryFragment : MvpAppCompatFragment(), HistoryView {
                     override fun onDestroyActionMode(mode: ActionMode?) {
                         actionMode = null
                     }
-
                 })
                 return true
             }
@@ -81,12 +93,16 @@ class HistoryFragment : MvpAppCompatFragment(), HistoryView {
         return binding.root
     }
 
-    override fun showHistory(records: List<Record>) {
+    private fun showHistory(records: List<Record>) {
         recordsAdapter.submitList(records)
     }
 
-    override fun showRecordFragment(record: Record) {
+    private fun showRecordFragment(record: Record) {
         binding.root.findNavController().navigate(R.id.action_historyFragment_to_recordFragment, bundleOf(
             RecordFragment.ARG_RECORD to record))
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show()
     }
 }

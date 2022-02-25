@@ -1,6 +1,6 @@
 package com.mint.minttracker.database
 
-import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_STARTED
+import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Track
 import io.reactivex.Observable

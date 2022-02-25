@@ -3,9 +3,9 @@ package com.mint.minttracker.domain.buttonControl
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
-import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_PAUSED
-import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_RESUMED
-import com.mint.minttracker.mapFragment.MapPresenter.Companion.STATUS_STARTED
+import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_PAUSED
+import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_RESUMED
+import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_STARTED
 import com.mint.minttracker.services.LocationServiceForeground
 import javax.inject.Inject
 

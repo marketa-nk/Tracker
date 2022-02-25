@@ -5,35 +5,41 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.arellomobile.mvp.MvpAppCompatFragment
-import com.arellomobile.mvp.presenter.InjectPresenter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.mint.minttracker.App
 import com.mint.minttracker.databinding.FragmentRecordBinding
 import com.mint.minttracker.historyFragment.round
 import com.mint.minttracker.models.Record
 import java.text.SimpleDateFormat
+import java.util.*
+import javax.inject.Inject
 
+class RecordFragment : Fragment() {
 
-class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
+    @Inject
+    lateinit var factory: RecordViewModelFactory.Factory
 
-    @InjectPresenter
-    lateinit var recordPresenter: RecordPresenter
-
-    private var map: GoogleMap? = null
-    private var polyline: Polyline? = null
-
-    init {
-        println("recordFragment created - Nata")
+    private val viewModel: RecordViewModel by viewModels {
+        factory.create(requireArguments().getParcelable(ARG_RECORD)!!)
     }
 
     private var _binding: FragmentRecordBinding? = null
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.instance.appComponent.injectRecordFragment(this)
+
+        viewModel.data.observe(this, { record -> showRecordInfo(record) })
+        viewModel.points.observe(this, { points -> showPolyline(points) })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,14 +48,15 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
         _binding = FragmentRecordBinding.inflate(inflater, container, false)
 
         binding.mapView.onCreate(savedInstanceState)
-        binding.mapView.getMapAsync(this)
-
-        val record: Record? = requireArguments().getParcelable(ARG_RECORD)
-        if (record != null) {
-            recordPresenter.readyToShowRecord(record)
+        binding.mapView.getMapAsync { googleMap ->
+            googleMap.apply {
+                uiSettings.isZoomControlsEnabled = true
+            }
         }
 
-        binding.myToolbar.setNavigationOnClickListener { activity?.onBackPressed() }
+        binding.myToolbar.setNavigationOnClickListener {
+            activity?.onBackPressed()
+        }
 
         return binding.root
     }
@@ -72,39 +79,36 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
         println("onPause RecordFragment Nata")
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap.apply {
-            uiSettings.isZoomControlsEnabled = true
-        }
-    }
-
-    override fun showPolyline(list: List<LatLng>) {
-        addPolyline()
-        polyline?.points = list
-
+    private fun showPolyline(list: List<LatLng>) {
         val bounds = LatLngBounds.Builder()
             .also { builder ->
                 list.forEach { builder.include(it) }
             }.build()
-        map?.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50))
+
+        binding.mapView.getMapAsync { map ->
+            map.addPolyline(list)
+            map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50))
+        }
     }
 
-    private fun addPolyline() {
-        polyline = map?.addPolyline(
+    private fun GoogleMap.addPolyline(list: List<LatLng>): Polyline {
+        return addPolyline(
             PolylineOptions()
                 .color(Color.RED)
                 .width(10.0F)
+                .addAll(list)
         )
     }
 
-    override fun showRecordInfo(record: Record) {
-        binding.date.text = SimpleDateFormat("d MMMM yyyy").format(record.date)
+    private fun showRecordInfo(record: Record) {
+        binding.date.text = SimpleDateFormat("d MMMM yyyy", Locale.getDefault()).format(record.date)
         binding.timeText.text = timeToString(record.totalTimeMs)
         binding.distanceText.text = "${(record.distance).round()}м"
-        binding.speedAveText.text = "${(record.aveSpeed * 3.6).round()}км/ч"
+        binding.speedAveText.text = "${(record.aveSpeed * 3.6).round()}км/ч"//todo 3.6
         binding.speedMaxText.text = "${(record.maxSpeed * 3.6).round()}км/ч"
     }
 
+    //todo duplicate code
     private fun timeToString(totalTime: Long): String {
         val sec = (totalTime / 1000).toInt() % 60
         val min = (totalTime / (1000 * 60) % 60)
@@ -137,6 +141,4 @@ class RecordFragment : MvpAppCompatFragment(), RecordView, OnMapReadyCallback {
     companion object {
         const val ARG_RECORD = "ARG_RECORD"
     }
-
-
 }
