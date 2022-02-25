@@ -15,6 +15,7 @@ import com.mint.minttracker.MainActivity
 import com.mint.minttracker.R
 import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
 import com.mint.minttracker.App
+import com.mint.minttracker.models.Status
 import javax.inject.Inject
 
 class LocationServiceForeground : Service() {
@@ -31,7 +32,7 @@ class LocationServiceForeground : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
-            val status = intent.getStringExtra(STATUS)
+            val status = intent.getSerializableExtra(STATUS) as? Status
             if (status != null) {
                 when (intent.action) {
                     ACTION_START_FOREGROUND_SERVICE -> startForegroundService(status)
@@ -48,7 +49,7 @@ class LocationServiceForeground : Service() {
         return null
     }
 
-    private fun startForegroundService(status: String) {
+    private fun startForegroundService(status: Status) {
         startForeground(1, createNotification().build())
         tracker.start(status)
         serviceStarted = true
@@ -90,7 +91,7 @@ class LocationServiceForeground : Service() {
         return notification
     }
 
-    private fun stopForegroundService(status: String) {
+    private fun stopForegroundService(status: Status) {
         tracker.stop(status)
         if (serviceStarted){
             serviceStarted = false

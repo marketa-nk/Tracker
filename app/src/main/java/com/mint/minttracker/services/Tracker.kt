@@ -3,10 +3,8 @@ package com.mint.minttracker.services
 import com.mint.minttracker.database.DataBaseRepository
 import com.mint.minttracker.di.components.AppScope
 import com.mint.minttracker.domain.location.LocationInteractorImpl
-import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_FINISHED
-import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_RESUMED
-import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
+import com.mint.minttracker.models.Status
 import com.mint.minttracker.models.Track
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -30,9 +28,9 @@ class Tracker @Inject constructor(
     private var locationPublishSubject = PublishSubject.create<MintLocation>()
     var location: Observable<MintLocation> = locationPublishSubject.hide()
 
-    fun start(status: String) {
+    fun start(status: Status) {
         when (status) {
-            STATUS_STARTED ->
+            Status.STATUS_STARTED ->
                 dataBaseRepository.createTrack()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -42,7 +40,7 @@ class Tracker @Inject constructor(
                         it.printStackTrace()
                     })
                     .addDisposable()
-            STATUS_RESUMED ->
+            Status.STATUS_RESUMED ->
                 dataBaseRepository.getLastTrack()
                     .flatMap { track ->
                         dataBaseRepository.updateTrack(track.copy(status = status))
@@ -58,7 +56,7 @@ class Tracker @Inject constructor(
         }
     }
 
-    fun stop(status: String) {
+    fun stop(status: Status) {
         disposableLocationUpdates.set(null)
         dataBaseRepository.getLastTrack()
             .flatMap { track ->
@@ -66,7 +64,7 @@ class Tracker @Inject constructor(
                     .map { track to it }
             }
             .flatMap { (track, locations) ->
-                if (locations.isEmpty() && status == STATUS_FINISHED) {
+                if (locations.isEmpty() && status == Status.STATUS_FINISHED) {
                     dataBaseRepository.deleteTrack(track)
                 } else {
                     dataBaseRepository.updateTrack(Track(track.id, track.date, status))

@@ -10,6 +10,7 @@ import com.mint.minttracker.domain.buttonControl.ButtonState
 import com.mint.minttracker.domain.location.LocationInteractorImpl
 import com.mint.minttracker.domain.map.MapInteractor
 import com.mint.minttracker.models.MintLocation
+import com.mint.minttracker.models.Status
 import com.mint.minttracker.models.Track
 import com.mint.minttracker.services.Tracker
 import io.reactivex.Single
@@ -65,8 +66,8 @@ class MapViewModel(
     private fun setInitialState() {
         mapInteractor.getLastTrack()
             .flatMap {
-                if (it.status != STATUS_FINISHED) {
-                    mapInteractor.updateTrack(it.copy(status = STATUS_PAUSED))
+                if (it.status != Status.STATUS_FINISHED) {
+                    mapInteractor.updateTrack(it.copy(status = Status.STATUS_PAUSED))
                 } else {
                     Single.just(it)
                 }
@@ -74,13 +75,13 @@ class MapViewModel(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                if (it.status != STATUS_FINISHED) {
+                if (it.status != Status.STATUS_FINISHED) {
                     showLastData(it)
                 }
                 buttonState.value = buttonControlInteractorImpl.controlButtonPressed(it.status)
                 showMyCurrentLocation()
             }, {
-                buttonState.value = buttonControlInteractorImpl.controlButtonPressed(STATUS_FINISHED)
+                buttonState.value = buttonControlInteractorImpl.controlButtonPressed(Status.STATUS_FINISHED)
                 showMyCurrentLocation()
                 it.printStackTrace()
             })
@@ -115,10 +116,10 @@ class MapViewModel(
             .addDisposable(currentLocationDisposable)
     }
 
-    fun controlButtonPressed(str: String) {
-        buttonState.value = buttonControlInteractorImpl.controlButtonPressed(str)
-        buttonControlInteractorImpl.start(str)
-        if (str == STATUS_STARTED) {
+    fun controlButtonPressed(status: Status) {
+        buttonState.value = buttonControlInteractorImpl.controlButtonPressed(status)
+        buttonControlInteractorImpl.start(status)
+        if (status == Status.STATUS_STARTED) {
             points.clear()
         //            viewState?.updatePolyline(points)
         }
@@ -152,10 +153,10 @@ class MapViewModel(
     }
 
     companion object {
-        const val STATUS_STARTED = "STATUS_STARTED"
-        const val STATUS_PAUSED = "STATUS_PAUSED"
-        const val STATUS_RESUMED = "STATUS_RESUMED"
-        const val STATUS_FINISHED = "STATUS_FINISHED"
+//        const val STATUS_STARTED = "STATUS_STARTED"
+//        const val STATUS_PAUSED = "STATUS_PAUSED"
+//        const val STATUS_RESUMED = "STATUS_RESUMED"
+//        const val STATUS_FINISHED = "STATUS_FINISHED"
         const val SHOW_HISTORY_FRAGMENT = "SHOW_HISTORY_FRAGMENT"
     }
 }

@@ -1,7 +1,7 @@
 package com.mint.minttracker.database
 
-import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
+import com.mint.minttracker.models.Status
 import com.mint.minttracker.models.Track
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -23,7 +23,7 @@ class DataBaseRepositoryImpl @Inject constructor(
     }
 
     override fun createTrack(): Single<Long> {
-        return tracksDao.insertTrack(Track(0, System.currentTimeMillis(), STATUS_STARTED))
+        return tracksDao.insertTrack(Track(0, System.currentTimeMillis(), Status.STATUS_STARTED))
             .doOnSuccess { println("Track created - Nata") }
     }
 

@@ -26,11 +26,8 @@ import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.domain.buttonControl.ButtonState
 import com.mint.minttracker.historyFragment.round
-import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_FINISHED
-import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_PAUSED
-import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_RESUMED
-import com.mint.minttracker.mapFragment.MapViewModel.Companion.STATUS_STARTED
 import com.mint.minttracker.models.MintLocation
+import com.mint.minttracker.models.Status
 import java.text.DateFormat
 import javax.inject.Inject
 
@@ -139,19 +136,19 @@ class MapFragment : Fragment() {
         binding.accuracyText.text = getString(R.string.accuracy)
 
         binding.start.setOnClickListener {
-            viewModel.controlButtonPressed(STATUS_STARTED)
+            viewModel.controlButtonPressed(Status.STATUS_STARTED)
 
         }
         binding.pause.setOnClickListener {
-            viewModel.controlButtonPressed(STATUS_PAUSED)
+            viewModel.controlButtonPressed(Status.STATUS_PAUSED)
 
         }
         binding.resume.setOnClickListener {
-            viewModel.controlButtonPressed(STATUS_RESUMED)
+            viewModel.controlButtonPressed(Status.STATUS_RESUMED)
 
         }
         binding.stop.setOnClickListener {
-            viewModel.controlButtonPressed(STATUS_FINISHED)
+            viewModel.controlButtonPressed(Status.STATUS_FINISHED)
 
         }
         binding.history.setOnClickListener {
