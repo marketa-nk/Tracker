@@ -21,8 +21,8 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
                             date = 0,
                             distance = 0.0,
                             totalTimeMs = 0,
-                            aveSpeed = 0.0,
-                            maxSpeed = 0f
+                            aveSpeedInMeters = 0.0,
+                            maxSpeedInMeters = 0f
                         )
                     } else {
                         Record(
@@ -30,8 +30,8 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
                             date = it.value.first().time,
                             distance = getDistance(it.value),
                             totalTimeMs = it.value.last().time - it.value.first().time,
-                            aveSpeed = it.value.map { it.speedInKm }.average(),
-                            maxSpeed = it.value.maxOf { it.speedInKm }
+                            aveSpeedInMeters = it.value.map { it.speedInKm }.average(),
+                            maxSpeedInMeters = it.value.maxOf { it.speedInKm }
                         )
                     }
                 }

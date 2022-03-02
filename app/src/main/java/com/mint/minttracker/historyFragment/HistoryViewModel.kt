@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.mint.minttracker.BaseViewModel
+import com.mint.minttracker.SingleLiveEvent
 import com.mint.minttracker.domain.history.HistoryInteractor
 import com.mint.minttracker.models.Record
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -12,12 +13,11 @@ import javax.inject.Inject
 
 class HistoryViewModel @Inject constructor(private val historyInteractor: HistoryInteractor) : BaseViewModel() {
 
-    val records: MutableLiveData<List<Record>> by lazy { MutableLiveData<List<Record>>() }
-    val recordData: MutableLiveData<Record> by lazy { MutableLiveData<Record>() } //todo what is recordData&?
-    val message: MutableLiveData<String> by lazy { MutableLiveData<String>() }//todo fix
+    val records: MutableLiveData<List<Record>> = MutableLiveData<List<Record>>(emptyList())
+    val displayRecordScreenEvent: MutableLiveData<Record> = SingleLiveEvent()
+    val messageEvent: MutableLiveData<String> = SingleLiveEvent()
 
     init {
-        message.value = "dsfdkls"
         loadRecordList()
     }
 
@@ -28,14 +28,15 @@ class HistoryViewModel @Inject constructor(private val historyInteractor: Histor
             .subscribe({
                 println("RecordList ${it.size} - nata")
                 records.value = it
+                //todo feature. empty state
             }, {
                 it.printStackTrace()
             })
             .addDisposable()
     }
 
-    fun recordClicked(record: Record) {
-        recordData.value = record
+    fun recordClicked(rec: Record) {
+        this.displayRecordScreenEvent.value = rec
     }
 
     fun deleteRecordButtonClicked(record: Record) {
@@ -43,9 +44,9 @@ class HistoryViewModel @Inject constructor(private val historyInteractor: Histor
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                message.value = "Track was deleted."
+                messageEvent.value = "Track was deleted."
             }, {
-                message.value = "Error deleting"
+                messageEvent.value = "Error deleting"
                 it.printStackTrace()
             })
             .addDisposable()

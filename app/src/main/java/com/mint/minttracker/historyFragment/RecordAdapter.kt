@@ -27,10 +27,10 @@ class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(Reco
 
         fun bind(record: Record) {
             binding.date.text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(record.date)
-            binding.timeText.text = timeToString(record.totalTimeMs)
-            binding.distanceText.text = "${(record.distance).round()}м"
-            binding.speedAveText.text = "${(record.aveSpeed * 3.6).round()}км/ч"
-            binding.speedMaxText.text = "${(record.maxSpeed * 3.6).round()}км/ч"
+            binding.timeText.text = record.totalTimeMs.timeToString()
+            binding.distanceText.text = "${(record.distance).toUiString()}м"
+            binding.speedAveText.text = "${(record.aveSpeedInKm).toUiString()}км/ч"
+            binding.speedMaxText.text = "${(record.maxSpeedInKm).toUiString()}км/ч"
             binding.root.setOnClickListener {
                 recordListener?.onItemClick(record)
             }
@@ -39,13 +39,13 @@ class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(Reco
                 true
             }
         }
-
-        private fun timeToString(totalTime: Long): String {
-            val sec = (totalTime / 1000).toInt() % 60
-            val min = (totalTime / (1000 * 60) % 60)
-            val hr = (totalTime / (1000 * 60 * 60) % 24)
-            return "$hr:$min:$sec"
-        }
+//
+//        private fun timeToString(totalTime: Long): String {
+//            val sec = (totalTime / 1000).toInt() % 60
+//            val min = (totalTime / (1000 * 60) % 60)
+//            val hr = (totalTime / (1000 * 60 * 60) % 24)
+//            return "$hr:$min:$sec"
+//        }
     }
 
     interface OnRecordClickListener {
@@ -54,6 +54,14 @@ class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(Reco
     }
 }
 
-fun Double.round(): Double {
-    return (this * 100.0).roundToInt() / 100.0
+//todo move to КУДА
+//FormatUtils.kt
+fun Double.toUiString(): String {
+    return ((this * 100.0).roundToInt() / 100.0).toString()
+}
+fun Long.timeToString(): String{
+    val sec = (this / 1000).toInt() % 60
+    val min = (this / (1000 * 60) % 60)
+    val hr = (this / (1000 * 60 * 60) % 24)
+    return "$hr:$min:$sec"
 }

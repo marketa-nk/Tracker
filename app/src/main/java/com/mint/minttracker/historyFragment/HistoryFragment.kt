@@ -37,8 +37,6 @@ class HistoryFragment : Fragment() {
         App.instance.appComponent.injectHistoryFragment(this)
 
         viewModel.records.observe(this, { records -> showHistory(records) })
-        viewModel.recordData.observe(this, { rec -> showRecordFragment(rec) })
-        viewModel.message.observe(this, { message -> showToast(message) })
     }
 
     override fun onCreateView(
@@ -87,6 +85,8 @@ class HistoryFragment : Fragment() {
                 return true
             }
         }
+        viewModel.messageEvent.observe(this.viewLifecycleOwner, { message -> showToast(message) })
+        viewModel.displayRecordScreenEvent.observe(this.viewLifecycleOwner, { rec -> showRecordFragment(rec) })
 
         binding.myToolbar.setNavigationOnClickListener { activity?.onBackPressed() }
 
@@ -98,11 +98,18 @@ class HistoryFragment : Fragment() {
     }
 
     private fun showRecordFragment(record: Record) {
-        binding.root.findNavController().navigate(R.id.action_historyFragment_to_recordFragment, bundleOf(
-            RecordFragment.ARG_RECORD to record))
+        binding.root.findNavController().navigate(
+            R.id.action_historyFragment_to_recordFragment,
+            bundleOf(RecordFragment.ARG_RECORD to record)
+        )
     }
 
     private fun showToast(message: String) {
         Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

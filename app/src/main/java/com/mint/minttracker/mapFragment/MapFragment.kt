@@ -20,12 +20,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.*
 import com.mint.minttracker.App
 import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.domain.buttonControl.ButtonState
-import com.mint.minttracker.historyFragment.round
+import com.mint.minttracker.historyFragment.toUiString
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Status
 import java.text.DateFormat
@@ -43,6 +44,7 @@ class MapFragment : Fragment() {
 
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
+    private var mapView: MapView? = null
     private var polyline: Polyline? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +52,11 @@ class MapFragment : Fragment() {
         println("onCreate Nata")
         App.instance.appComponent.injectMapFragment(this)
 
-        viewModel.message.observe(this, { navigateToHistoryFragment() }) //todo nata: как по другому делать переходы на другие фрагменты
+        viewModel.messageEvent.observe(this, {
+            if (it == MapViewModel.SHOW_HISTORY_FRAGMENT) {
+                navigateToHistoryFragment()
+            }
+        })
 
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -109,10 +115,11 @@ class MapFragment : Fragment() {
     ): View {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
 
+        mapView = binding.mapView
         binding.mapView.onCreate(savedInstanceState)
 
         viewModel.pointsLiveData.observe(this.viewLifecycleOwner, { points -> updatePolyline(points) })
-        viewModel.mintLocation.observe(this.viewLifecycleOwner, { location ->
+        viewModel.lastLocation.observe(this.viewLifecycleOwner, { location ->
             showData(location)
             binding.mapView.getMapAsync { googleMap ->
                 googleMap.apply {
@@ -229,10 +236,10 @@ class MapFragment : Fragment() {
         binding.timeData.text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(mintLocation.time)
         binding.latitudeData.text = "${(mintLocation.lat)}"
         binding.longitudeData.text = "${(mintLocation.lon)}"
-        binding.altitudeData.text = "${(mintLocation.altitude).round()}"
-        binding.speedData.text = "${(mintLocation.speedInKm).toDouble().round()}"
-        binding.bearingData.text = "${(mintLocation.bearing.toDouble()).round()}"
-        binding.accuracyData.text = "${(mintLocation.accuracy.toDouble()).round()}"
+        binding.altitudeData.text = "${(mintLocation.altitude).toUiString()}"
+        binding.speedData.text = "${(mintLocation.speedInKm).toDouble().toUiString()}"
+        binding.bearingData.text = "${(mintLocation.bearing.toDouble()).toUiString()}"
+        binding.accuracyData.text = "${(mintLocation.accuracy.toDouble()).toUiString()}"
     }
 
     private fun navigateToHistoryFragment() {
@@ -250,8 +257,7 @@ class MapFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        //todo check crash after rotate
-        binding.mapView.onSaveInstanceState(outState)
+        _binding?.mapView?.onSaveInstanceState(outState)
     }
 
     override fun onLowMemory() {
@@ -265,9 +271,14 @@ class MapFragment : Fragment() {
         println("onStop Nata")
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        binding.mapView.onDestroy()
+        mapView!!.onDestroy()//todo check this cause
         println("onDestroy Nata")
     }
 }

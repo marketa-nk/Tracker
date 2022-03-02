@@ -32,7 +32,7 @@ class InteractorModule() {
     }
 
     @Provides
-    fun provideIMapInteractor(dataBaseRepository: DataBaseRepository, locationService: LocationRepository): MapInteractor {
+    fun provideIMapInteractor(dataBaseRepository: DataBaseRepository): MapInteractor {
         return MapInteractorImpl(dataBaseRepository)
     }
 

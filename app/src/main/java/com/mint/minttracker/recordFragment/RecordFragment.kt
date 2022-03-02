@@ -15,7 +15,8 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.mint.minttracker.App
 import com.mint.minttracker.databinding.FragmentRecordBinding
-import com.mint.minttracker.historyFragment.round
+import com.mint.minttracker.historyFragment.toUiString
+import com.mint.minttracker.historyFragment.timeToString
 import com.mint.minttracker.models.Record
 import java.text.SimpleDateFormat
 import java.util.*
@@ -102,19 +103,19 @@ class RecordFragment : Fragment() {
 
     private fun showRecordInfo(record: Record) {
         binding.date.text = SimpleDateFormat("d MMMM yyyy", Locale.getDefault()).format(record.date)
-        binding.timeText.text = timeToString(record.totalTimeMs)
-        binding.distanceText.text = "${(record.distance).round()}м"
-        binding.speedAveText.text = "${(record.aveSpeed * 3.6).round()}км/ч"//todo 3.6
-        binding.speedMaxText.text = "${(record.maxSpeed * 3.6).round()}км/ч"
+        binding.timeText.text = record.totalTimeMs.timeToString()
+        binding.distanceText.text = "${(record.distance).toUiString()}м"
+        binding.speedAveText.text = "${(record.aveSpeedInKm).toUiString()}км/ч"
+        binding.speedMaxText.text = "${(record.maxSpeedInKm).toUiString()}км/ч"
     }
 
-    //todo duplicate code
-    private fun timeToString(totalTime: Long): String {
-        val sec = (totalTime / 1000).toInt() % 60
-        val min = (totalTime / (1000 * 60) % 60)
-        val hr = (totalTime / (1000 * 60 * 60) % 24)
-        return "$hr:$min:$sec"
-    }
+    //todo duplicate code - done
+//    private fun timeToString(totalTime: Long): String {
+//        val sec = (totalTime / 1000).toInt() % 60
+//        val min = (totalTime / (1000 * 60) % 60)
+//        val hr = (totalTime / (1000 * 60 * 60) % 24)
+//        return "$hr:$min:$sec"
+//    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -130,6 +131,11 @@ class RecordFragment : Fragment() {
         super.onStop()
         binding.mapView.onStop()
         println("onStop RecordFragment Nata")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+//        _binding = null
     }
 
     override fun onDestroy() {
