@@ -14,7 +14,7 @@ class LocationInteractorImpl @Inject constructor(private val locationService: Lo
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .map { location ->
-                MintLocation(0, 0, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy)
+                MintLocation(0, 0, 0, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy)
             }
     }
 

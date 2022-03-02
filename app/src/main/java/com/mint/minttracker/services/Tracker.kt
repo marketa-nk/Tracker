@@ -35,7 +35,8 @@ class Tracker @Inject constructor(
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        saveLocationUpdates(it)
+                        saveLocationUpdates(it, 0)
+                        println("nata - segment 0")
                     }, {
                         it.printStackTrace()
                     })
@@ -45,10 +46,14 @@ class Tracker @Inject constructor(
                     .flatMap { track ->
                         dataBaseRepository.updateTrack(track.copy(status = status))
                     }
+                    .flatMap { track ->
+                        dataBaseRepository.getLastLocationByTrackId(track.id)
+                    }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        saveLocationUpdates(it.id)
+                        saveLocationUpdates(it.idTrack, it.segment + 1)
+                        println("nata - segment ${it.segment} + 1")
                     }, {
                         it.printStackTrace()
                     })
@@ -84,10 +89,10 @@ class Tracker @Inject constructor(
 
     }
 
-    private fun saveLocationUpdates(trackId: Long) {
+    private fun saveLocationUpdates(trackId: Long, segment: Int) {
         locationInteractorImpl.getLocation()
             .concatMapSingle { location ->
-                dataBaseRepository.saveLocation(location, trackId)
+                dataBaseRepository.saveLocation(location, trackId, segment)
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

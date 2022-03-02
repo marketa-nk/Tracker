@@ -23,8 +23,8 @@ interface MintLocationDao {
     @Query("SELECT * FROM mintLocation WHERE idTrack = :id")
     fun getAllRecordsByIDTrack(id: Long): Observable<List<MintLocation>>
 
-    @Query("SELECT * FROM mintLocation WHERE idTrack = :id")
-    fun getLastRecordByTrackId(id: Long): Single<MintLocation>
+    @Query("SELECT * FROM mintLocation WHERE idTrack = :id ORDER BY segment DESC LIMIT 1")
+    fun getLastLocationByTrackId(id: Long): Single<MintLocation>
 
     @Query("SELECT COUNT(id) idMint FROM mintlocation")
     fun getCount(): Int

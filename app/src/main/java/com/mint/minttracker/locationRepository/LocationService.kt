@@ -50,7 +50,7 @@ class LocationService @Inject constructor(context: Context) : LocationRepository
                 fusedLocationProvider.lastLocation.addOnSuccessListener { location: Location? ->
                     location ?: emitter.onError(NullPointerException("LastLocation is null"))
                     if (location != null) {
-                        emitter.onSuccess(MintLocation(0, -1, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy))
+                        emitter.onSuccess(MintLocation(0, -1, -1, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy))
                     }
                 }
             } catch (e: Exception) {

@@ -15,6 +15,7 @@ data class MintLocation(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val idTrack: Long,
+    val segment: Int,
     val time: Long,
     val lat: Double,
     val lon: Double,
@@ -23,7 +24,7 @@ data class MintLocation(
     val speedInMeters: Float,
     val bearing: Float,
     val accuracy: Float,
-) : Parcelable {
+    ) : Parcelable {
     @IgnoredOnParcel
     @Ignore
     val latLng = LatLng(lat, lon)

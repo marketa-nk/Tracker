@@ -7,9 +7,11 @@ import io.reactivex.Single
 
 interface DataBaseRepository {
 
-    fun saveLocation(mintLocation: MintLocation, trackId: Long): Single<MintLocation>
+    fun saveLocation(mintLocation: MintLocation, trackId: Long, segment: Int): Single<MintLocation>
 
     fun getAllLocationsById(id: Long): Single<List<MintLocation>>
+
+    fun getLastLocationByTrackId(trackId: Long): Single<MintLocation>
 
     fun createTrack(): Single<Long>
 

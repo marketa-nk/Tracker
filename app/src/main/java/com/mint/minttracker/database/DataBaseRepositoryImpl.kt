@@ -12,14 +12,21 @@ class DataBaseRepositoryImpl @Inject constructor(
     private val locationDao: MintLocationDao,
 ) : DataBaseRepository {
 
-    override fun saveLocation(mintLocation: MintLocation, trackId: Long): Single<MintLocation> {
-        return locationDao.insertMintLocation(mintLocation.copy(idTrack = trackId))
-            .map { mintLocation.copy(id = it) }
-            .doOnSuccess { println("nata - saved $it") }
+    override fun saveLocation(mintLocation: MintLocation, trackId: Long, segment: Int): Single<MintLocation> {
+        return Single.fromCallable { mintLocation.copy(idTrack = trackId, segment = segment) }
+            .flatMap { locationForInsert ->
+                locationDao.insertMintLocation(locationForInsert)
+                    .map { locationId -> locationForInsert.copy(id = locationId) }
+            }
+            .doOnSuccess { println("nata - saved $it, segment - ${it.segment}") }
     }
 
     override fun getAllLocationsById(id: Long): Single<List<MintLocation>> {
         return locationDao.getAllRecordsByID(id)
+    }
+
+    override fun getLastLocationByTrackId(trackId: Long): Single<MintLocation> {
+        return locationDao.getLastLocationByTrackId(trackId)
     }
 
     override fun createTrack(): Single<Long> {
@@ -51,6 +58,7 @@ class DataBaseRepositoryImpl @Inject constructor(
     override fun getTrackById(id: Long): Single<Track> {
         return tracksDao.getTrackByID(id)
     }
+
     override fun getTrackAndLocations(): Observable<Map<Track, List<MintLocation>>> {
         return tracksDao.getTrackAndLocations()
     }
