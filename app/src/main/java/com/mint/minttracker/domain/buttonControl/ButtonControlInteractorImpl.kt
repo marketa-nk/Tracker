@@ -14,14 +14,14 @@ class ButtonControlInteractorImpl @Inject constructor(private val appContext: Co
             Status.STATUS_STARTED -> ButtonState(start = false, pause = true, resume = false, stop = true)
             Status.STATUS_PAUSED -> ButtonState(start = false, pause = false, resume = true, stop = true)
             Status.STATUS_RESUMED -> ButtonState(start = false, pause = true, resume = false, stop = true)
-            else -> ButtonState(start = true, pause = false, resume = false, stop = false)
+            Status.STATUS_FINISHED -> ButtonState(start = true, pause = false, resume = false, stop = false)
         }
     }
 
     override fun start(status: Status) {
         when (status) {
             Status.STATUS_STARTED, Status.STATUS_RESUMED -> startLocationService(true, status)
-            else -> startLocationService(false, status)
+            Status.STATUS_PAUSED, Status.STATUS_FINISHED -> startLocationService(false, status)
         }
     }
 

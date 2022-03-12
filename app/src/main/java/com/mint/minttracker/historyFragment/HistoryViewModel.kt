@@ -14,8 +14,8 @@ import javax.inject.Inject
 class HistoryViewModel @Inject constructor(private val historyInteractor: HistoryInteractor) : BaseViewModel() {
 
     val records: MutableLiveData<List<Record>> = MutableLiveData<List<Record>>(emptyList())
-    val displayRecordScreenEvent: MutableLiveData<Record> = SingleLiveEvent()
-    val messageEvent: MutableLiveData<String> = SingleLiveEvent()
+    val displayRecordScreenEvent: SingleLiveEvent<Record> = SingleLiveEvent()
+    val messageEvent: SingleLiveEvent<String> = SingleLiveEvent()
 
     init {
         loadRecordList()
@@ -23,6 +23,7 @@ class HistoryViewModel @Inject constructor(private val historyInteractor: Histor
 
     private fun loadRecordList() {
         historyInteractor.loadHistory()
+            .map { it.reversed() }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

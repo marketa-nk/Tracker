@@ -2,8 +2,10 @@ package com.mint.minttracker.domain.history
 
 import android.location.Location
 import com.mint.minttracker.database.DataBaseRepository
+import com.mint.minttracker.getTotalTimeInMillis
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Record
+import com.mint.minttracker.models.Status
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.math.BigDecimal
@@ -14,27 +16,31 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
     override fun loadHistory(): Observable<List<Record>> {
         return dataBaseRepository.getTrackAndLocations()
             .map { values ->
-                values.map {
-                    if (it.value.isEmpty()) {
-                        Record(
-                            idTrack = it.key.id,
-                            date = 0,
-                            distance = 0.0,
-                            totalTimeMs = 0,
-                            aveSpeedInMeters = 0.0,
-                            maxSpeedInMeters = 0f
-                        )
-                    } else {
-                        Record(
-                            idTrack = it.key.id,
-                            date = it.value.first().time,
-                            distance = getDistance(it.value),
-                            totalTimeMs = it.value.last().time - it.value.first().time,
-                            aveSpeedInMeters = it.value.map { it.speedInKm }.average(),
-                            maxSpeedInMeters = it.value.maxOf { it.speedInKm }
-                        )
+                values
+                    .filter {
+                        it.key.status == Status.STATUS_FINISHED
                     }
-                }
+                    .map {
+                        if (it.value.isEmpty()) {
+                            Record(
+                                idTrack = it.key.id,
+                                date = 0,
+                                distance = 0.0,
+                                totalTimeMs = 0,
+                                aveSpeedInMeters = 0.0,
+                                maxSpeedInMeters = 0f
+                            )
+                        } else {
+                            Record(
+                                idTrack = it.key.id,
+                                date = it.value.first().time,
+                                distance = getDistance(it.value),
+                                totalTimeMs = it.value.getTotalTimeInMillis(),
+                                aveSpeedInMeters = it.value.map { it.speedInKm }.average(),
+                                maxSpeedInMeters = it.value.maxOf { it.speedInKm }
+                            )
+                        }
+                    }
             }
     }
 

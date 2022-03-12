@@ -6,15 +6,14 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.mint.minttracker.App
 import com.mint.minttracker.MainActivity
 import com.mint.minttracker.R
-import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
-import com.mint.minttracker.App
 import com.mint.minttracker.models.Status
 import javax.inject.Inject
 
@@ -37,8 +36,8 @@ class LocationServiceForeground : Service() {
                 when (intent.action) {
                     ACTION_START_FOREGROUND_SERVICE -> startForegroundService(status)
                     ACTION_STOP_FOREGROUND_SERVICE -> stopForegroundService(status)
-                    ACTION_PLAY -> Toast.makeText(applicationContext, "You click Play button.", Toast.LENGTH_LONG).show()
-                    ACTION_PAUSE -> Toast.makeText(applicationContext, "You click Pause button.", Toast.LENGTH_LONG).show()
+//                    ACTION_PLAY -> Toast.makeText(applicationContext, "You click Play button.", Toast.LENGTH_LONG).show()
+//                    ACTION_PAUSE -> Toast.makeText(applicationContext, "You click Pause button.", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -50,9 +49,18 @@ class LocationServiceForeground : Service() {
     }
 
     private fun startForegroundService(status: Status) {
-        startForeground(1, createNotification().build())
-        tracker.start(status)
-        serviceStarted = true
+        when (status){
+            Status.STATUS_STARTED ->  tracker.start()
+            Status.STATUS_RESUMED ->  tracker.resume(status)
+            else -> {
+                //nothing
+               // todo
+            }
+        }
+        if (!serviceStarted) {
+            startForeground(1, createNotification().build())
+            serviceStarted = true
+        }
     }
 
     private fun createNotification(): NotificationCompat.Builder {
@@ -60,8 +68,7 @@ class LocationServiceForeground : Service() {
         val pendingIntent = PendingIntent.getActivity(this, 0, Intent(), 0)
         // Create notification builder.
         val bigTextStyle = NotificationCompat.BigTextStyle()
-            .setBigContentTitle("MintTracker implemented by foreground service.")
-            .bigText("Android foreground service is a android service which can run in foreground always, it can be controlled by user via notification.");
+            .setBigContentTitle("MintTracker is running.")
 
         val notification = NotificationCompat.Builder(this, FOREGROUND_SERVICE_CHANNEL)
             .setStyle(bigTextStyle)
@@ -76,24 +83,12 @@ class LocationServiceForeground : Service() {
         val contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
         notification.setContentIntent(contentIntent)
 
-        // Add Play button intent in notification.
-        val playIntent = Intent(this, LocationServiceForeground::class.java)
-        playIntent.action = ACTION_PLAY
-        val pendingPlayIntent = PendingIntent.getService(this, 0, playIntent, 0)
-        notification.addAction(NotificationCompat.Action(android.R.drawable.ic_media_play, "Play", pendingPlayIntent))
-
-        // Add Pause button intent in notification.
-        val pauseIntent = Intent(this, LocationServiceForeground::class.java)
-        pauseIntent.action = ACTION_PAUSE
-        val pendingPrevIntent = PendingIntent.getService(this, 0, pauseIntent, 0)
-        notification.addAction(NotificationCompat.Action(android.R.drawable.ic_media_pause, "Pause", pendingPrevIntent))
-
         return notification
     }
 
     private fun stopForegroundService(status: Status) {
         tracker.stop(status)
-        if (serviceStarted){
+        if (status == Status.STATUS_FINISHED) {
             serviceStarted = false
             stopForeground(true)
             stopSelf(1)
@@ -122,7 +117,7 @@ class LocationServiceForeground : Service() {
     }
 
     override fun onDestroy() {
-        tracker.onDestroy()
+        tracker.onClear()
         super.onDestroy()
     }
 }

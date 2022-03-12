@@ -26,9 +26,10 @@ import com.mint.minttracker.App
 import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.domain.buttonControl.ButtonState
-import com.mint.minttracker.historyFragment.toUiString
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Status
+import com.mint.minttracker.secToUiString
+import com.mint.minttracker.toUiString
 import java.text.DateFormat
 import javax.inject.Inject
 
@@ -52,11 +53,11 @@ class MapFragment : Fragment() {
         println("onCreate Nata")
         App.instance.appComponent.injectMapFragment(this)
 
-        viewModel.messageEvent.observe(this, {
+        viewModel.showHistoryEvent.observe(this) {
             if (it == MapViewModel.SHOW_HISTORY_FRAGMENT) {
                 navigateToHistoryFragment()
             }
-        })
+        }
 
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -118,21 +119,28 @@ class MapFragment : Fragment() {
         mapView = binding.mapView
         binding.mapView.onCreate(savedInstanceState)
 
-        viewModel.pointsLiveData.observe(this.viewLifecycleOwner, { points -> updatePolyline(points) })
-        viewModel.lastLocation.observe(this.viewLifecycleOwner, { location ->
+        viewModel.pointsLiveData.observe(this.viewLifecycleOwner) { points ->
+            updatePolyline(points)
+        }
+        viewModel.lastLocation.observe(this.viewLifecycleOwner) { location ->
             showData(location)
             binding.mapView.getMapAsync { googleMap ->
                 googleMap.apply {
                     animateCamera(CameraUpdateFactory.newLatLngZoom(location.latLng, 17.0f))
                 }
             }
-        })
-        viewModel.buttonState.observe(this.viewLifecycleOwner, { buttonState -> setButtonState(buttonState) })
-        viewModel.grantedPerm.observe(this.viewLifecycleOwner, { granted ->
+        }
+        viewModel.buttonState.observe(this.viewLifecycleOwner) { buttonState ->
+            setButtonState(buttonState)
+        }
+        viewModel.grantedPerm.observe(this.viewLifecycleOwner) { granted ->
             if (granted) {
                 addSettingsToMap()
             }
-        })
+        }
+        viewModel.time.observe(this.viewLifecycleOwner) {
+            binding.totalTimeData.text = it.secToUiString()
+        }
 
         binding.timeText.text = getString(R.string.time)
         binding.latitudeText.text = getString(R.string.latitude)
@@ -141,19 +149,20 @@ class MapFragment : Fragment() {
         binding.speedText.text = getString(R.string.speed)
         binding.bearingText.text = getString(R.string.bearing)
         binding.accuracyText.text = getString(R.string.accuracy)
+        binding.totalTimeText.text = getString(R.string.total_time)
 
         binding.start.setOnClickListener {
             viewModel.controlButtonPressed(Status.STATUS_STARTED)
-
         }
+
         binding.pause.setOnClickListener {
             viewModel.controlButtonPressed(Status.STATUS_PAUSED)
-
         }
+
         binding.resume.setOnClickListener {
             viewModel.controlButtonPressed(Status.STATUS_RESUMED)
-
         }
+
         binding.stop.setOnClickListener {
             viewModel.controlButtonPressed(Status.STATUS_FINISHED)
 
@@ -257,7 +266,7 @@ class MapFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        _binding?.mapView?.onSaveInstanceState(outState)
+        mapView?.onSaveInstanceState(outState)
     }
 
     override fun onLowMemory() {
@@ -278,7 +287,7 @@ class MapFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mapView!!.onDestroy()//todo check this cause
+        mapView?.onDestroy()//todo check this cause
         println("onDestroy Nata")
     }
 }

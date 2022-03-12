@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.model.LatLng
 import com.mint.minttracker.BaseViewModel
 import com.mint.minttracker.SingleLiveEvent
+import com.mint.minttracker.domain.buttonControl.ButtonControlInteractor
 import com.mint.minttracker.domain.buttonControl.ButtonControlInteractorImpl
 import com.mint.minttracker.domain.buttonControl.ButtonState
+import com.mint.minttracker.domain.location.LocationInteractor
 import com.mint.minttracker.domain.location.LocationInteractorImpl
 import com.mint.minttracker.domain.map.MapInteractor
 import com.mint.minttracker.models.MintLocation
@@ -22,23 +24,33 @@ import javax.inject.Inject
 
 class MapViewModel(
     private val mapInteractor: MapInteractor,
-    private val buttonControlInteractorImpl: ButtonControlInteractorImpl,
-    private val locationInteractorImpl: LocationInteractorImpl,
+    private val buttonControlInteractor: ButtonControlInteractor,
+    private val locationInteractor: LocationInteractor,
     private val tracker: Tracker,
 ) : BaseViewModel() {
 
     private var points = mutableListOf<LatLng>()
     val pointsLiveData: MutableLiveData<List<LatLng>> by lazy { MutableLiveData<List<LatLng>>() }
     val lastLocation: MutableLiveData<MintLocation> by lazy { MutableLiveData<MintLocation>() }
-    val messageEvent: MutableLiveData<String> by lazy { SingleLiveEvent() }//todo rename
+    val showHistoryEvent: SingleLiveEvent<String> by lazy { SingleLiveEvent() }
     val buttonState: MutableLiveData<ButtonState> by lazy { MutableLiveData<ButtonState>() }
     val grantedPerm: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
+    val time: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
 
     private val currentLocationDisposable = SerialDisposable()
 
     init {
-//        viewState?.requireLocationPermission()
         getPointsForPolyline()
+
+        tracker.timeInSec
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                time.value = it
+            }, {
+                it.printStackTrace()
+            })
+            .addDisposable()
     }
 
     private fun getPointsForPolyline() {
@@ -48,7 +60,6 @@ class MapViewModel(
             .subscribe({
                 points.add(it.latLng)
                 pointsLiveData.value = points
-//                viewState?.updatePolyline(points)
             }, {
                 it.printStackTrace()
             })
@@ -68,7 +79,7 @@ class MapViewModel(
         mapInteractor.getLastTrack()
             .flatMap {
                 if (it.status != Status.STATUS_FINISHED) {
-                    mapInteractor.updateTrack(it.copy(status = Status.STATUS_PAUSED))
+                    mapInteractor.updateTrack(it.copy(status = Status.STATUS_RESUMED))
                 } else {
                     Single.just(it)
                 }
@@ -78,11 +89,13 @@ class MapViewModel(
             .subscribe({
                 if (it.status != Status.STATUS_FINISHED) {
                     showLastData(it)
+                    buttonControlInteractor.start(it.status)
                 }
-                buttonState.value = buttonControlInteractorImpl.controlButtonPressed(it.status)
+                buttonState.value = buttonControlInteractor.controlButtonPressed(it.status)
+
                 showMyCurrentLocation()
             }, {
-                buttonState.value = buttonControlInteractorImpl.controlButtonPressed(Status.STATUS_FINISHED)
+                buttonState.value = buttonControlInteractor.controlButtonPressed(Status.STATUS_FINISHED)
                 showMyCurrentLocation()
                 it.printStackTrace()
             })
@@ -104,7 +117,7 @@ class MapViewModel(
     }
 
     private fun showMyCurrentLocation() {
-        locationInteractorImpl.getLocation()
+        locationInteractor.getLocation()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ location ->
@@ -116,8 +129,8 @@ class MapViewModel(
     }
 
     fun controlButtonPressed(status: Status) {
-        buttonState.value = buttonControlInteractorImpl.controlButtonPressed(status)
-        buttonControlInteractorImpl.start(status)
+        buttonState.value = buttonControlInteractor.controlButtonPressed(status)
+        buttonControlInteractor.start(status)
         if (status == Status.STATUS_STARTED) {
             points.clear()
             pointsLiveData.value = points
@@ -125,7 +138,7 @@ class MapViewModel(
     }
 
     fun historyButtonPressed() {
-        messageEvent.value = SHOW_HISTORY_FRAGMENT
+        showHistoryEvent.value = SHOW_HISTORY_FRAGMENT
     }
 
     fun myLocationButtonIsClicked() {
@@ -151,10 +164,6 @@ class MapViewModel(
     }
 
     companion object {
-//        const val STATUS_STARTED = "STATUS_STARTED"
-//        const val STATUS_PAUSED = "STATUS_PAUSED"
-//        const val STATUS_RESUMED = "STATUS_RESUMED"
-//        const val STATUS_FINISHED = "STATUS_FINISHED"
         const val SHOW_HISTORY_FRAGMENT = "SHOW_HISTORY_FRAGMENT"
     }
 }

@@ -6,8 +6,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mint.minttracker.databinding.ViewRecordBinding
 import com.mint.minttracker.models.Record
+import com.mint.minttracker.msToUiString
+import com.mint.minttracker.toUiString
 import java.text.DateFormat
-import kotlin.math.roundToInt
 
 class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(RecordsDiffUtil()) {
 
@@ -27,7 +28,7 @@ class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(Reco
 
         fun bind(record: Record) {
             binding.date.text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(record.date)
-            binding.timeText.text = record.totalTimeMs.timeToString()
+            binding.timeText.text = record.totalTimeMs.msToUiString()
             binding.distanceText.text = "${(record.distance).toUiString()}м"
             binding.speedAveText.text = "${(record.aveSpeedInKm).toUiString()}км/ч"
             binding.speedMaxText.text = "${(record.maxSpeedInKm).toUiString()}км/ч"
@@ -39,29 +40,10 @@ class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(Reco
                 true
             }
         }
-//
-//        private fun timeToString(totalTime: Long): String {
-//            val sec = (totalTime / 1000).toInt() % 60
-//            val min = (totalTime / (1000 * 60) % 60)
-//            val hr = (totalTime / (1000 * 60 * 60) % 24)
-//            return "$hr:$min:$sec"
-//        }
     }
 
     interface OnRecordClickListener {
         fun onItemClick(record: Record)
         fun onItemLongClick(record: Record): Boolean
     }
-}
-
-//todo move to КУДА
-//FormatUtils.kt
-fun Double.toUiString(): String {
-    return ((this * 100.0).roundToInt() / 100.0).toString()
-}
-fun Long.timeToString(): String{
-    val sec = (this / 1000).toInt() % 60
-    val min = (this / (1000 * 60) % 60)
-    val hr = (this / (1000 * 60 * 60) % 24)
-    return "$hr:$min:$sec"
 }

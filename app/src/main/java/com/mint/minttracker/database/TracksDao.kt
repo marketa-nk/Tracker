@@ -31,6 +31,6 @@ interface TracksDao {
     @Query("SELECT * FROM track WHERE idTrack = :id")
     fun getTrackByID(id: Long): Single<Track>
 
-    @Query("SELECT * FROM Track JOIN MintLocation ON Track.idTrack = MintLocation.idTrack")
+    @Query("SELECT * FROM Track JOIN MintLocation ON Track.idTrack = MintLocation.idTrack ")
     fun getTrackAndLocations(): Observable<Map<Track, List<MintLocation>>>
 }

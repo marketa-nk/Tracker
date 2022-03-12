@@ -15,9 +15,9 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.mint.minttracker.App
 import com.mint.minttracker.databinding.FragmentRecordBinding
-import com.mint.minttracker.historyFragment.toUiString
-import com.mint.minttracker.historyFragment.timeToString
 import com.mint.minttracker.models.Record
+import com.mint.minttracker.msToUiString
+import com.mint.minttracker.toUiString
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -103,19 +103,11 @@ class RecordFragment : Fragment() {
 
     private fun showRecordInfo(record: Record) {
         binding.date.text = SimpleDateFormat("d MMMM yyyy", Locale.getDefault()).format(record.date)
-        binding.timeText.text = record.totalTimeMs.timeToString()
+        binding.timeText.text = record.totalTimeMs.msToUiString()
         binding.distanceText.text = "${(record.distance).toUiString()}м"
         binding.speedAveText.text = "${(record.aveSpeedInKm).toUiString()}км/ч"
         binding.speedMaxText.text = "${(record.maxSpeedInKm).toUiString()}км/ч"
     }
-
-    //todo duplicate code - done
-//    private fun timeToString(totalTime: Long): String {
-//        val sec = (totalTime / 1000).toInt() % 60
-//        val min = (totalTime / (1000 * 60) % 60)
-//        val hr = (totalTime / (1000 * 60 * 60) % 24)
-//        return "$hr:$min:$sec"
-//    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
