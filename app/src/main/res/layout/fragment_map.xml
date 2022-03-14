@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,313 +7,179 @@
     android:orientation="vertical"
     tools:context=".mapFragment.MapFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/myAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/myToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:title="@string/app_name"
-            app:titleTextColor="@color/white" />
-
-    </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map_view"
         android:name="com.google.android.gms.maps.MapView"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/constraint_layout_metrics"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/history"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="12dp"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        app:cornerRadius="2dp"
+        app:icon="@drawable/ic_history"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraint_layout"
+        android:id="@+id/constraint_layout_metrics"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toTopOf="@id/constraint_layout_btns"
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/time_text"
-            android:layout_width="match_parent"
+            android:id="@+id/total_time_data"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Time" />
-
-        <TextView
-            android:id="@+id/time_data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/cardview_shadow_start_color"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-smallcaps"
             android:gravity="center"
             android:padding="5dp"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@id/distance_data"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="00:10:25" />
+
+        <TextView
+            android:id="@+id/total_time_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:text="@string/time"
             android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/time_text"
-            tools:text="01-01-2022" />
+            app:layout_constraintEnd_toEndOf="@id/total_time_data"
+            app:layout_constraintStart_toStartOf="@id/total_time_data"
+            app:layout_constraintTop_toBottomOf="@id/total_time_data" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraint_layout_latlon"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/time_data">
-
-            <TextView
-                android:id="@+id/latitude_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/latitude_data"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Latitude" />
-
-            <TextView
-                android:id="@+id/latitude_data"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:background="@color/cardview_shadow_start_color"
-                android:gravity="center"
-                android:padding="5dp"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toStartOf="@id/longitude_data"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/latitude_text"
-                tools:text="53.564.2546" />
-
-            <TextView
-                android:id="@+id/longitude_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/longitude_data"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Longitude" />
-
-            <TextView
-                android:id="@+id/longitude_data"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:background="@color/cardview_shadow_start_color"
-                android:gravity="center"
-                android:padding="5dp"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/latitude_data"
-                app:layout_constraintTop_toBottomOf="@id/longitude_text"
-                tools:text="27.946.3654" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraint_layout_metrics"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/constraint_layout_latlon">
-
-            <TextView
-                android:id="@+id/altitude_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/altitude_data"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Altitude(m)" />
-
-            <TextView
-                android:id="@+id/altitude_data"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:background="@color/cardview_shadow_start_color"
-                android:gravity="center"
-                android:padding="5dp"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toStartOf="@id/speed_data"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/altitude_text"
-                tools:text="1751" />
-
-            <TextView
-                android:id="@+id/speed_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/speed_data"
-                app:layout_constraintStart_toStartOf="@id/speed_data"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Speed(km/h)" />
-
-            <TextView
-                android:id="@+id/speed_data"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/cardview_shadow_start_color"
-                android:gravity="center"
-                android:padding="5dp"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toStartOf="@id/bearing_data"
-                app:layout_constraintStart_toEndOf="@id/altitude_data"
-                app:layout_constraintTop_toBottomOf="@id/speed_text"
-                tools:text="13.4" />
-
-            <TextView
-                android:id="@+id/bearing_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/bearing_data"
-                app:layout_constraintStart_toStartOf="@id/bearing_data"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Bearing" />
-
-            <TextView
-                android:id="@+id/bearing_data"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/cardview_shadow_start_color"
-                android:gravity="center"
-                android:padding="5dp"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/speed_data"
-                app:layout_constraintTop_toBottomOf="@id/bearing_text"
-                tools:text="231" />
-
-            <TextView
-                android:id="@+id/accuracy_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/accuracy_data"
-                app:layout_constraintStart_toStartOf="@id/accuracy_data"
-                app:layout_constraintTop_toBottomOf="@id/speed_data"
-                tools:text="Accuracy(m)" />
-
-            <TextView
-                android:id="@+id/accuracy_data"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/cardview_shadow_start_color"
-                android:gravity="center"
-                android:padding="5dp"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/speed_data"
-                app:layout_constraintStart_toStartOf="@id/speed_data"
-                app:layout_constraintTop_toBottomOf="@id/accuracy_text"
-                tools:text="10.0" />
-
-            <TextView
-                android:id="@+id/total_time_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/total_time_data"
-                app:layout_constraintStart_toStartOf="@id/total_time_data"
-                app:layout_constraintTop_toBottomOf="@id/bearing_data"
-                tools:text="TotalTime(sec)" />
-
-            <TextView
-                android:id="@+id/total_time_data"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/cardview_shadow_start_color"
-                android:gravity="center"
-                android:padding="5dp"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@id/bearing_data"
-                app:layout_constraintStart_toStartOf="@id/bearing_data"
-                app:layout_constraintTop_toBottomOf="@id/total_time_text"
-                tools:text="256" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <ImageButton
-            android:id="@+id/start"
+        <TextView
+            android:id="@+id/distance_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:layout_marginTop="72dp"
-            android:src="@drawable/ic_round_play_arrow_24"
-            app:layout_constraintEnd_toStartOf="@id/pause"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics" />
-        <ImageButton
-            android:id="@+id/pause"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:src="@drawable/ic_round_pause_24"
-            app:layout_constraintEnd_toStartOf="@id/resume"
-            app:layout_constraintStart_toEndOf="@id/start"
-            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics" />
-
-        <ImageButton
-            android:id="@+id/resume"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:src="@drawable/ic_round_replay_24"
-            app:layout_constraintEnd_toStartOf="@id/stop"
-            app:layout_constraintStart_toEndOf="@id/pause"
-            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics" />
-
-
-        <ImageButton
-            android:id="@+id/stop"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:src="@drawable/ic_round_stop_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/resume"
-            app:layout_constraintTop_toBottomOf="@id/constraint_layout_metrics" />
-
-        <Button
-            android:id="@+id/history"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="@string/history"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/start" />
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="17.52!!"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@id/speed_data"
+            app:layout_constraintStart_toEndOf="@id/total_time_data"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="175,1" />
+
+        <TextView
+            android:id="@+id/distance_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:text="@string/km"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/distance_data"
+            app:layout_constraintStart_toStartOf="@id/distance_data"
+            app:layout_constraintTop_toBottomOf="@id/distance_data" />
+
+        <TextView
+            android:id="@+id/speed_data"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/distance_data"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="13.4" />
+
+        <TextView
+            android:id="@+id/speed_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:text="@string/speed_kmh"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/speed_data"
+            app:layout_constraintStart_toStartOf="@id/speed_data"
+            app:layout_constraintTop_toBottomOf="@id/speed_data" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</LinearLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout_btns"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <ImageButton
+            android:id="@+id/start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:layout_marginBottom="48dp"
+            android:background="@drawable/circle_100"
+            android:src="@drawable/ic_round_play_arrow_48"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageButton
+            android:id="@+id/pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:layout_marginBottom="48dp"
+            android:background="@drawable/circle_100"
+            android:src="@drawable/ic_round_pause_48"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageButton
+            android:id="@+id/resume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="58dp"
+            android:background="@drawable/circle_80_blue"
+            android:src="@drawable/ic_round_play_arrow_48"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/stop"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageButton
+            android:id="@+id/stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="58dp"
+            android:background="@drawable/circle_80_white"
+            android:src="@drawable/ic_round_stop_48"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/resume" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

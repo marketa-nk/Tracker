@@ -10,11 +10,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -30,7 +32,6 @@ import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Status
 import com.mint.minttracker.secToUiString
 import com.mint.minttracker.toUiString
-import java.text.DateFormat
 import javax.inject.Inject
 
 class MapFragment : Fragment() {
@@ -142,15 +143,6 @@ class MapFragment : Fragment() {
             binding.totalTimeData.text = it.secToUiString()
         }
 
-        binding.timeText.text = getString(R.string.time)
-        binding.latitudeText.text = getString(R.string.latitude)
-        binding.longitudeText.text = getString(R.string.longitude)
-        binding.altitudeText.text = getString(R.string.altitude)
-        binding.speedText.text = getString(R.string.speed)
-        binding.bearingText.text = getString(R.string.bearing)
-        binding.accuracyText.text = getString(R.string.accuracy)
-        binding.totalTimeText.text = getString(R.string.total_time)
-
         binding.start.setOnClickListener {
             viewModel.controlButtonPressed(Status.STATUS_STARTED)
         }
@@ -205,8 +197,8 @@ class MapFragment : Fragment() {
     private fun GoogleMap.addPolyline(): Polyline {
         return addPolyline(
             PolylineOptions()
-                .color(Color.RED)
-                .width(10.0F)
+                .color(Color.parseColor("#FF6D00"))
+                .width(15.0F)
         )
     }
 
@@ -215,7 +207,14 @@ class MapFragment : Fragment() {
     }
 
     private fun View.changeVisibility(enabled: Boolean) {
-        this.isEnabled = enabled
+        this.isVisible = enabled
+        if (enabled) {
+            this.animate().alpha(1f).duration = 500
+            this.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_up))
+        } else {
+            this.animate().alpha(0f).duration = 500
+            this.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_down))
+        }
     }
 
     private fun visibilityStartButton(visibility: Boolean) {
@@ -242,13 +241,7 @@ class MapFragment : Fragment() {
     }
 
     private fun showData(mintLocation: MintLocation) {
-        binding.timeData.text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(mintLocation.time)
-        binding.latitudeData.text = "${(mintLocation.lat)}"
-        binding.longitudeData.text = "${(mintLocation.lon)}"
-        binding.altitudeData.text = "${(mintLocation.altitude).toUiString()}"
         binding.speedData.text = "${(mintLocation.speedInKm).toDouble().toUiString()}"
-        binding.bearingData.text = "${(mintLocation.bearing.toDouble()).toUiString()}"
-        binding.accuracyData.text = "${(mintLocation.accuracy.toDouble()).toUiString()}"
     }
 
     private fun navigateToHistoryFragment() {

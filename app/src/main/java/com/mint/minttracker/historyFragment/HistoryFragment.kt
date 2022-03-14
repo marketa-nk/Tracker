@@ -33,7 +33,7 @@ class HistoryFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        println("Histoty on create - nata")
         App.instance.appComponent.injectHistoryFragment(this)
 
         viewModel.records.observe(this, { records -> showHistory(records) })

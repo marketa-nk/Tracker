@@ -15,5 +15,7 @@
 
     <string name="history">History</string>
     <string name="total_time">TotalTime(sec)</string>
+    <string name="km">km</string>
+    <string name="speed_kmh">km/h</string>
 
 </resources>
