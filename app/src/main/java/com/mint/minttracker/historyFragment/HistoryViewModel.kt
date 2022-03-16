@@ -13,9 +13,10 @@ import javax.inject.Inject
 
 class HistoryViewModel @Inject constructor(private val historyInteractor: HistoryInteractor) : BaseViewModel() {
 
-    val records: MutableLiveData<List<Record>> = MutableLiveData<List<Record>>(emptyList())
+    val records: MutableLiveData<List<Record>> = MutableLiveData<List<Record>>()
     val displayRecordScreenEvent: SingleLiveEvent<Record> = SingleLiveEvent()
     val messageEvent: SingleLiveEvent<String> = SingleLiveEvent()
+    val listIsEmpty: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
 
     init {
         loadRecordList()
@@ -29,7 +30,7 @@ class HistoryViewModel @Inject constructor(private val historyInteractor: Histor
             .subscribe({
                 println("RecordList ${it.size} - nata")
                 records.value = it
-                //todo feature. empty state
+                listIsEmpty.value = it.isEmpty()
             }, {
                 it.printStackTrace()
             })

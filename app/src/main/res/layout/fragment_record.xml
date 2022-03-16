@@ -16,23 +16,12 @@
             android:id="@+id/myToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_round_arrow_back_24"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:title="@string/app_name"
+            app:navigationIcon="@drawable/ic_round_arrow_back_24"
+            app:title="@string/date_data"
             app:titleTextColor="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
-
-    <TextView
-        android:id="@+id/date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="13 января 2022г." />
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map_view"
@@ -42,59 +31,133 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/speedMax_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Макс.скорость 17.5 км/ч" />
-
-        <TextView
-            android:id="@+id/speedAve_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/speedMax_text"
-            tools:text="Сред.скорость 9.5 км/ч" />
+        android:layout_height="wrap_content"
+        android:padding="32dp">
 
         <TextView
             android:id="@+id/distance_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:drawablePadding="8dp"
+            android:text="@string/distance"
+            android:textSize="16sp"
+            app:drawableStartCompat="@drawable/ic_baseline_distance_orange_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/speedAve_text"
-            tools:text="Дистанция 16км" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/time_text"
+            android:id="@+id/distance_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/distance_text"
-            tools:text="Общее время 2ч 41м" />
+            android:text="@string/distance_data"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/distance_text"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
-            android:id="@+id/locations_text"
+            android:id="@+id/duration_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
+            android:drawablePadding="8dp"
+            android:text="@string/duration"
+            android:textSize="16sp"
+            app:drawableStartCompat="@drawable/ic_round_timer_orange_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/time_text"
-            tools:text="Количество локаций: 10" />
+            app:layout_constraintTop_toBottomOf="@id/distance_text" />
+
+        <TextView
+            android:id="@+id/duration_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/duration_data"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/duration_text"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/total_time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:drawablePadding="8dp"
+            android:text="@string/total_time_text"
+            android:textSize="16sp"
+            app:drawableStartCompat="@drawable/ic_hourglass_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/duration_text" />
+
+        <TextView
+            android:id="@+id/total_time_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/duration_data"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/total_time_text"
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
+        <TextView
+            android:id="@+id/stop_time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:drawablePadding="8dp"
+            android:text="@string/stop_time"
+            android:textSize="16sp"
+            app:drawableStartCompat="@drawable/ic_round_stop_24_orange"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/total_time_text" />
+
+        <TextView
+            android:id="@+id/stop_time_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/duration_data"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/stop_time_text"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/speed_max_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:drawablePadding="8dp"
+            android:text="@string/speed_max"
+            android:textSize="16sp"
+            app:drawableStartCompat="@drawable/ic_round_speed_orange_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stop_time_text" />
+
+        <TextView
+            android:id="@+id/speed_max_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_data"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/speed_max_text"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/speed_ave_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:drawablePadding="8dp"
+            android:text="@string/speed_average"
+            android:textSize="16sp"
+            app:drawableStartCompat="@drawable/ic_round_speed_orange_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/speed_max_text" />
+        <TextView
+            android:id="@+id/speed_ave_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_data"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/speed_ave_text"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

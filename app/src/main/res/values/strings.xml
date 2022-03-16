@@ -1,21 +1,27 @@
 <resources>
     <string name="app_name">MintTracker</string>
-    <string name="time">Time</string>
-    <string name="latitude">Latitude</string>
-    <string name="longitude">Longitude</string>
-    <string name="altitude">Altitude(m)</string>
-    <string name="speed">Speed(km/h)</string>
-    <string name="bearing">Bearing</string>
     <string name="start">Start</string>
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
     <string name="stop">Stop</string>
-    <string name="accuracy">Accuracy(m)</string>
     <string name="channel_name">channel_name</string>
-
     <string name="history">History</string>
     <string name="total_time">TotalTime(sec)</string>
     <string name="km">km</string>
+    <string name="time">time</string>
     <string name="speed_kmh">km/h</string>
-
+    <string name="start_time">00:00:00</string>
+    <string name="start_distance">0,0</string>
+    <string name="start_speed">0,0</string>
+    <string name="no_history_records">All your workouts will be here.</string>
+    <string name="distance">Distance</string>
+    <string name="duration">Duration</string>
+    <string name="total_time_text">Total time</string>
+    <string name="stop_time">Stop time</string>
+    <string name="speed_max">Speed max</string>
+    <string name="speed_average">Speed average</string>
+    <string name="distance_data">0,0 km</string>
+    <string name="duration_data">00h 00m 00s</string>
+    <string name="speed_data">0,0 km/h</string>
+    <string name="date_data">00 month year</string>
 </resources>

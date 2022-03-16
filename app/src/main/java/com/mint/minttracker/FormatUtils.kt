@@ -14,6 +14,13 @@ fun Long.msToUiString(): String {
     return "$hr:$min:$sec"
 }
 
+fun Long.msToRecordUiString(): String {
+    val sec = ((this / 1000).toInt() % 60).addZero()
+    val min = ((this / (1000 * 60) % 60)).toInt().addZero()
+    val hr = ((this / (1000 * 60 * 60) % 24)).toInt().addZero()
+    return "${hr}h ${min}\" ${sec}'"
+}
+
 fun Long.secToUiString(): String {
     val sec = (this.toInt() % 60).addZero()
     val min = ((this / 60) % 60).toInt().addZero()

@@ -26,6 +26,7 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
                                 idTrack = it.key.id,
                                 date = 0,
                                 distance = 0.0,
+                                durationMs = it.value.getTotalTimeInMillis(),
                                 totalTimeMs = 0,
                                 aveSpeedInMeters = 0.0,
                                 maxSpeedInMeters = 0f
@@ -35,7 +36,8 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
                                 idTrack = it.key.id,
                                 date = it.value.first().time,
                                 distance = getDistance(it.value),
-                                totalTimeMs = it.value.getTotalTimeInMillis(),
+                                durationMs = it.value.getTotalTimeInMillis(),
+                                totalTimeMs = it.value.last().time - it.value.first().time,
                                 aveSpeedInMeters = it.value.map { it.speedInKm }.average(),
                                 maxSpeedInMeters = it.value.maxOf { it.speedInKm }
                             )

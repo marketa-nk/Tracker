@@ -137,6 +137,7 @@ class MapFragment : Fragment() {
         viewModel.grantedPerm.observe(this.viewLifecycleOwner) { granted ->
             if (granted) {
                 addSettingsToMap()
+                binding.fakeStart.isVisible = false
             }
         }
         viewModel.time.observe(this.viewLifecycleOwner) {
@@ -241,7 +242,7 @@ class MapFragment : Fragment() {
     }
 
     private fun showData(mintLocation: MintLocation) {
-        binding.speedData.text = "${(mintLocation.speedInKm).toDouble().toUiString()}"
+        binding.speedData.text = (mintLocation.speedInKm).toDouble().toUiString()
     }
 
     private fun navigateToHistoryFragment() {

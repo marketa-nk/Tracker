@@ -31,7 +31,6 @@ class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(Reco
             binding.timeText.text = record.totalTimeMs.msToUiString()
             binding.distanceText.text = "${(record.distance).toUiString()}м"
             binding.speedAveText.text = "${(record.aveSpeedInKm).toUiString()}км/ч"
-            binding.speedMaxText.text = "${(record.maxSpeedInKm).toUiString()}км/ч"
             binding.root.setOnClickListener {
                 recordListener?.onItemClick(record)
             }

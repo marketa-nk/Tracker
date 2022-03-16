@@ -10,6 +10,7 @@ data class Record(
     val idTrack: Long,
     val date: Long,
     val distance: Double,
+    val durationMs: Long,
     val totalTimeMs: Long,
     val aveSpeedInMeters: Double,
     val maxSpeedInMeters: Float
@@ -20,4 +21,10 @@ data class Record(
     @IgnoredOnParcel
     @Ignore
     val maxSpeedInKm: Double = (maxSpeedInMeters * 3.6)
+    @IgnoredOnParcel
+    @Ignore
+    val stopTimeMs: Long = totalTimeMs - durationMs
+    @IgnoredOnParcel
+    @Ignore
+    val distanceKm: Double = distance / 1000
 }

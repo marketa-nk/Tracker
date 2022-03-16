@@ -16,8 +16,10 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.mint.minttracker.App
 import com.mint.minttracker.databinding.FragmentRecordBinding
 import com.mint.minttracker.models.Record
+import com.mint.minttracker.msToRecordUiString
 import com.mint.minttracker.msToUiString
 import com.mint.minttracker.toUiString
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -95,18 +97,20 @@ class RecordFragment : Fragment() {
     private fun GoogleMap.addPolyline(list: List<LatLng>): Polyline {
         return addPolyline(
             PolylineOptions()
-                .color(Color.RED)
-                .width(10.0F)
+                .color(Color.parseColor("#FF6D00"))
+                .width(15.0F)
                 .addAll(list)
         )
     }
 
     private fun showRecordInfo(record: Record) {
-        binding.date.text = SimpleDateFormat("d MMMM yyyy", Locale.getDefault()).format(record.date)
-        binding.timeText.text = record.totalTimeMs.msToUiString()
-        binding.distanceText.text = "${(record.distance).toUiString()}м"
-        binding.speedAveText.text = "${(record.aveSpeedInKm).toUiString()}км/ч"
-        binding.speedMaxText.text = "${(record.maxSpeedInKm).toUiString()}км/ч"
+        binding.myToolbar.title = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(record.date)
+        binding.distanceData.text = (record.distanceKm).toUiString() + " km"
+        binding.durationData.text = record.durationMs.msToRecordUiString()
+        binding.totalTimeData.text = record.totalTimeMs.msToRecordUiString()
+        binding.stopTimeData.text = record.stopTimeMs.msToRecordUiString()
+        binding.speedMaxData.text = (record.maxSpeedInKm).toUiString() + " km/h"
+        binding.speedAveData.text = (record.aveSpeedInKm).toUiString() + " km/h"
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
