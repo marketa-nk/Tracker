@@ -1,6 +1,8 @@
 package com.mint.minttracker
 
 import com.mint.minttracker.models.MintLocation
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.roundToInt
 
 fun Double.toUiString(): String {
@@ -15,10 +17,11 @@ fun Long.msToUiString(): String {
 }
 
 fun Long.msToRecordUiString(): String {
-    val sec = ((this / 1000).toInt() % 60).addZero()
-    val min = ((this / (1000 * 60) % 60)).toInt().addZero()
-    val hr = ((this / (1000 * 60 * 60) % 24)).toInt().addZero()
-    return "${hr}h ${min}\" ${sec}'"
+    return SimpleDateFormat("HH'h' mm'\"' ss''", Locale.getDefault())
+        .apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        .format(this)
 }
 
 fun Long.secToUiString(): String {
@@ -28,7 +31,7 @@ fun Long.secToUiString(): String {
     return "$hr:$min:$sec"
 }
 
-fun Int.addZero(): String {
+private fun Int.addZero(): String {
     return if (this < 10) {
         "0$this"
     } else {

@@ -36,8 +36,6 @@ class LocationServiceForeground : Service() {
                 when (intent.action) {
                     ACTION_START_FOREGROUND_SERVICE -> startForegroundService(status)
                     ACTION_STOP_FOREGROUND_SERVICE -> stopForegroundService(status)
-//                    ACTION_PLAY -> Toast.makeText(applicationContext, "You click Play button.", Toast.LENGTH_LONG).show()
-//                    ACTION_PAUSE -> Toast.makeText(applicationContext, "You click Pause button.", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -50,7 +48,7 @@ class LocationServiceForeground : Service() {
 
     private fun startForegroundService(status: Status) {
         when (status){
-            Status.STATUS_STARTED ->  tracker.start()
+            Status.STATUS_STARTED ->  tracker.start(status)
             Status.STATUS_RESUMED ->  tracker.resume(status)
             else -> {
                 //nothing

@@ -1,14 +1,11 @@
 package com.mint.minttracker.domain.history
 
-import android.location.Location
 import com.mint.minttracker.database.DataBaseRepository
 import com.mint.minttracker.getTotalTimeInMillis
-import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Record
 import com.mint.minttracker.models.Status
 import io.reactivex.Observable
 import io.reactivex.Single
-import java.math.BigDecimal
 import javax.inject.Inject
 
 class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: DataBaseRepository) : HistoryInteractor {
@@ -26,7 +23,7 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
                                 idTrack = it.key.id,
                                 date = 0,
                                 distance = 0.0,
-                                durationMs = it.value.getTotalTimeInMillis(),
+                                durationMs = 0,
                                 totalTimeMs = 0,
                                 aveSpeedInMeters = 0.0,
                                 maxSpeedInMeters = 0f
@@ -35,11 +32,11 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
                             Record(
                                 idTrack = it.key.id,
                                 date = it.value.first().time,
-                                distance = getDistance(it.value),
+                                distance = LocationUtils.calcDistanceMeters(it.value),
                                 durationMs = it.value.getTotalTimeInMillis(),
                                 totalTimeMs = it.value.last().time - it.value.first().time,
-                                aveSpeedInMeters = it.value.map { it.speedInKm }.average(),
-                                maxSpeedInMeters = it.value.maxOf { it.speedInKm }
+                                aveSpeedInMeters = it.value.map { it.speedInMeters }.average(),
+                                maxSpeedInMeters = it.value.maxOf { it.speedInMeters }
                             )
                         }
                     }
@@ -51,23 +48,5 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
             .flatMap {
                 dataBaseRepository.deleteTrack(it)
             }
-    }
-
-    private fun getDistance(list: List<MintLocation>): Double {
-        val locationList = list.map { mintLocation ->
-            Location("loc").also { location ->
-                location.latitude = mintLocation.lat
-                location.longitude = mintLocation.lon
-            }
-        }
-        var distance = 0.0
-        for (i in 0 until locationList.size - 1) {
-            distance += getDistanceBetweenMeters(locationList[i], locationList[i + 1])
-        }
-        return distance
-    }
-
-    private fun getDistanceBetweenMeters(first: Location, next: Location): Double {
-        return (first.distanceTo(next)).toBigDecimal().setScale(2, BigDecimal.ROUND_HALF_UP).toDouble()
     }
 }

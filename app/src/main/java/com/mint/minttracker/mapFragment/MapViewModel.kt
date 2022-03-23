@@ -36,17 +36,30 @@ class MapViewModel(
     val buttonState: MutableLiveData<ButtonState> by lazy { MutableLiveData<ButtonState>() }
     val grantedPerm: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
     val time: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
+    val distance: MutableLiveData<Double> by lazy { MutableLiveData<Double>() }
 
     private val currentLocationDisposable = SerialDisposable()
 
     init {
         getPointsForPolyline()
-
+        getDistanse()
         tracker.timeInSec
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 time.value = it
+            }, {
+                it.printStackTrace()
+            })
+            .addDisposable()
+    }
+
+    private fun getDistanse() {
+        tracker.distance
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                distance.value = it
             }, {
                 it.printStackTrace()
             })
@@ -71,7 +84,7 @@ class MapViewModel(
             grantedPerm.value = true
             setInitialState()
         } else {
-            // TODO: 12/9/2021
+            // TODO
         }
     }
 

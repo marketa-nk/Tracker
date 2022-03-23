@@ -32,7 +32,7 @@ class StopWatch @Inject constructor() {
         }
     }
 
-    sealed class State {
+    private sealed class State {
         class START(
             val startTime: Long,
             val totalTimeInMillis: Long,

@@ -2,6 +2,7 @@ package com.mint.minttracker.services
 
 import com.mint.minttracker.database.DataBaseRepository
 import com.mint.minttracker.di.components.AppScope
+import com.mint.minttracker.domain.history.LocationUtils
 import com.mint.minttracker.domain.location.LocationInteractor
 import com.mint.minttracker.getTotalTimeInMillis
 import com.mint.minttracker.models.MintLocation
@@ -24,6 +25,7 @@ class Tracker @Inject constructor(
     private val dataBaseRepository: DataBaseRepository,
     private val locationInteractor: LocationInteractor,
     private val stopWatch: StopWatch,
+    private val distanceCalculator: DistanceCalculator,
 ) {
     private val disposableLocationUpdates = SerialDisposable()
 
@@ -32,15 +34,17 @@ class Tracker @Inject constructor(
     private var locationPublishSubject: Subject<MintLocation> = PublishSubject.create()
     var location: Observable<MintLocation> = locationPublishSubject.hide()
 
+    var distance: Observable<Double> = distanceCalculator.distancePublishSubject.hide()
+
     val timeInSec: Observable<Long> = Observable.interval(200, TimeUnit.MILLISECONDS)
         .map { stopWatch.getTimeSeconds() }
 
     private var firstStart = true
 
 
-    fun start() {
-        stopWatch.start(firstStart, 0)
-        firstStart = false
+    fun start(status: Status) {
+        distanceCalculator.setStartState(0.0)
+        stopWatchControl(status)
         dataBaseRepository.createTrack()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -54,7 +58,8 @@ class Tracker @Inject constructor(
     }
 
     fun resume(status: Status) {
-        resumeStopWatcher(firstStart)
+        restoreDistance(firstStart)
+        stopWatchControl(status)
         dataBaseRepository.getLastTrack()
             .flatMap { track ->
                 dataBaseRepository.updateTrack(track.copy(status = status))
@@ -63,7 +68,7 @@ class Tracker @Inject constructor(
                 dataBaseRepository.getLastLocationByTrackId(track.id)
             }
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(Schedulers.io())
             .subscribe({
                 saveLocationUpdates(it.idTrack, it.segment + 1)
                 println("nata - segment ${it.segment} + 1")
@@ -74,10 +79,7 @@ class Tracker @Inject constructor(
     }
 
     fun stop(status: Status) {
-        if (status == Status.STATUS_FINISHED) {
-            firstStart = true
-        }
-        stopWatch.pause()
+        stopWatchControl(status)
         disposableLocationUpdates.set(null)
         dataBaseRepository.getLastTrack()
             .flatMap { track ->
@@ -110,15 +112,31 @@ class Tracker @Inject constructor(
             .concatMapSingle { location ->
                 dataBaseRepository.saveLocation(location, trackId, segment)
             }
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
             .subscribe({
                 locationPublishSubject.onNext(it)
+                distanceCalculator.calculate(it)
             }, {
                 it.printStackTrace()
             })
             .addDisposable(disposableLocationUpdates)
     }
 
+    private fun stopWatchControl(status: Status) {
+        when (status) {
+            Status.STATUS_STARTED -> {
+                stopWatch.start(firstStart, 0)
+                firstStart = false
+            }
+            Status.STATUS_RESUMED -> resumeStopWatcher(firstStart)
+            Status.STATUS_PAUSED -> stopWatch.pause()
+            Status.STATUS_FINISHED -> {
+                stopWatch.pause()
+                firstStart = true
+            }
+        }
+    }
 
     private fun resumeStopWatcher(firstStart: Boolean) {
         dataBaseRepository.getLastTrack()
@@ -129,10 +147,11 @@ class Tracker @Inject constructor(
                     Single.just(emptyList())
                 }
             }
+            .map { list -> list.getTotalTimeInMillis() }
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(Schedulers.io())
             .subscribe({
-                stopWatch.start(firstStart, it.getTotalTimeInMillis())
+                stopWatch.start(firstStart, it)
                 if (firstStart) {
                     this.firstStart = false
                 }
@@ -142,6 +161,27 @@ class Tracker @Inject constructor(
             .addDisposable()
     }
 
+    private fun restoreDistance(firstStart: Boolean) {
+        if (firstStart) {
+            dataBaseRepository.getLastTrack()
+                .flatMap {
+                    if (it.status != Status.STATUS_FINISHED) {
+                        dataBaseRepository.getAllLocationsById(it.id)
+                    } else {
+                        Single.just(emptyList())
+                    }
+                }
+                .map { list -> LocationUtils.calcDistanceMeters(list) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe({
+                    distanceCalculator.setStartState(it)
+                }) {
+                    it.printStackTrace()
+                }
+                .addDisposable()
+        }
+    }
 
     private fun Disposable.addDisposable(): Disposable {
         compositeDisposable.add(this)

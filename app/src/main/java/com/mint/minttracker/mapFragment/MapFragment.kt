@@ -143,6 +143,9 @@ class MapFragment : Fragment() {
         viewModel.time.observe(this.viewLifecycleOwner) {
             binding.totalTimeData.text = it.secToUiString()
         }
+        viewModel.distance.observe(this.viewLifecycleOwner){
+            binding.distanceData.text = (it / 1000).toUiString()
+        }
 
         binding.start.setOnClickListener {
             viewModel.controlButtonPressed(Status.STATUS_STARTED)
