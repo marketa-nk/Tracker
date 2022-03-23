@@ -18,21 +18,9 @@ class ButtonControlInteractorImpl @Inject constructor(private val appContext: Co
         }
     }
 
-    override fun start(status: Status) {
-        when (status) {
-            Status.STATUS_STARTED, Status.STATUS_RESUMED -> startLocationService(true, status)
-            Status.STATUS_PAUSED, Status.STATUS_FINISHED -> startLocationService(false, status)
-        }
-    }
-
-    private fun startLocationService(run: Boolean, status: Status) {
+    override fun startLocationService(status: Status) {
         val serviceIntent = Intent(appContext, LocationServiceForeground::class.java).apply {
             putExtra(LocationServiceForeground.STATUS, status)
-            action = if (run) {
-                LocationServiceForeground.ACTION_START_FOREGROUND_SERVICE
-            } else {
-                LocationServiceForeground.ACTION_STOP_FOREGROUND_SERVICE
-            }
         }
         ContextCompat.startForegroundService(appContext, serviceIntent)
     }

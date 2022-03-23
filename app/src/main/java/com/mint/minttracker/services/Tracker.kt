@@ -41,10 +41,31 @@ class Tracker @Inject constructor(
 
     private var firstStart = true
 
-
-    fun start(status: Status) {
+    fun start() {
         distanceCalculator.setStartState(0.0)
-        stopWatchControl(status)
+        stopWatch.start(0)
+        firstStart = false
+        createTrackAndStartSavingLocations()
+    }
+
+    fun resume() {
+        restoreDistance(firstStart)
+        resumeStopWatcher(firstStart)
+        if (firstStart) {
+            this.firstStart = false
+        }
+        resumeSavingLocations()
+    }
+
+    fun stop(status: Status) {
+        stopWatch.pause()
+        if (status == Status.STATUS_FINISHED) {
+            firstStart = true
+        }
+        updateTrackAndStopLocationUpdates(status)
+    }
+
+    private fun createTrackAndStartSavingLocations() {
         dataBaseRepository.createTrack()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -57,12 +78,10 @@ class Tracker @Inject constructor(
             .addDisposable()
     }
 
-    fun resume(status: Status) {
-        restoreDistance(firstStart)
-        stopWatchControl(status)
+    private fun resumeSavingLocations() {
         dataBaseRepository.getLastTrack()
             .flatMap { track ->
-                dataBaseRepository.updateTrack(track.copy(status = status))
+                dataBaseRepository.updateTrack(track.copy(status = Status.STATUS_RESUMED))
             }
             .flatMap { track ->
                 dataBaseRepository.getLastLocationByTrackId(track.id)
@@ -78,8 +97,7 @@ class Tracker @Inject constructor(
             .addDisposable()
     }
 
-    fun stop(status: Status) {
-        stopWatchControl(status)
+    private fun updateTrackAndStopLocationUpdates(status: Status) {
         disposableLocationUpdates.set(null)
         dataBaseRepository.getLastTrack()
             .flatMap { track ->
@@ -104,7 +122,6 @@ class Tracker @Inject constructor(
                 it.printStackTrace()
             })
             .addDisposable()
-
     }
 
     private fun saveLocationUpdates(trackId: Long, segment: Int) {
@@ -123,42 +140,28 @@ class Tracker @Inject constructor(
             .addDisposable(disposableLocationUpdates)
     }
 
-    private fun stopWatchControl(status: Status) {
-        when (status) {
-            Status.STATUS_STARTED -> {
-                stopWatch.start(firstStart, 0)
-                firstStart = false
-            }
-            Status.STATUS_RESUMED -> resumeStopWatcher(firstStart)
-            Status.STATUS_PAUSED -> stopWatch.pause()
-            Status.STATUS_FINISHED -> {
-                stopWatch.pause()
-                firstStart = true
-            }
-        }
-    }
-
     private fun resumeStopWatcher(firstStart: Boolean) {
-        dataBaseRepository.getLastTrack()
-            .flatMap {
-                if (it.status != Status.STATUS_FINISHED) {
-                    dataBaseRepository.getAllLocationsById(it.id)
-                } else {
-                    Single.just(emptyList())
+        if (firstStart) {
+            dataBaseRepository.getLastTrack()
+                .flatMap {
+                    if (it.status != Status.STATUS_FINISHED) {
+                        dataBaseRepository.getAllLocationsById(it.id)
+                    } else {
+                        Single.just(emptyList())
+                    }
                 }
-            }
-            .map { list -> list.getTotalTimeInMillis() }
-            .subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .subscribe({
-                stopWatch.start(firstStart, it)
-                if (firstStart) {
-                    this.firstStart = false
+                .map { list -> list.getTotalTimeInMillis() }
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe({
+                    stopWatch.start(it)
+                }) {
+                    it.printStackTrace()
                 }
-            }) {
-                it.printStackTrace()
-            }
-            .addDisposable()
+                .addDisposable()
+        } else {
+            stopWatch.start()
+        }
     }
 
     private fun restoreDistance(firstStart: Boolean) {

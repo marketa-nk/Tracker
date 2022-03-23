@@ -33,10 +33,7 @@ class LocationServiceForeground : Service() {
         if (intent != null) {
             val status = intent.getSerializableExtra(STATUS) as? Status
             if (status != null) {
-                when (intent.action) {
-                    ACTION_START_FOREGROUND_SERVICE -> startForegroundService(status)
-                    ACTION_STOP_FOREGROUND_SERVICE -> stopForegroundService(status)
-                }
+                startService(status)
             }
         }
         return START_NOT_STICKY
@@ -46,15 +43,33 @@ class LocationServiceForeground : Service() {
         return null
     }
 
-    private fun startForegroundService(status: Status) {
+    private fun startService(status: Status) {
         when (status){
-            Status.STATUS_STARTED ->  tracker.start(status)
-            Status.STATUS_RESUMED ->  tracker.resume(status)
-            else -> {
-                //nothing
-               // todo
+            Status.STATUS_STARTED -> {
+                startService()
+                tracker.start()
+            }
+            Status.STATUS_RESUMED -> {
+                startService()
+                tracker.resume()
+            }
+            Status.STATUS_PAUSED -> {
+                tracker.stop(status)
+            }
+            Status.STATUS_FINISHED ->{
+                tracker.stop(status)
+                stopService()
             }
         }
+    }
+
+    private fun stopService() {
+        serviceStarted = false
+        stopForeground(true)
+        stopSelf(1)
+    }
+
+    private fun startService() {
         if (!serviceStarted) {
             startForeground(1, createNotification().build())
             serviceStarted = true
@@ -84,15 +99,6 @@ class LocationServiceForeground : Service() {
         return notification
     }
 
-    private fun stopForegroundService(status: Status) {
-        tracker.stop(status)
-        if (status == Status.STATUS_FINISHED) {
-            serviceStarted = false
-            stopForeground(true)
-            stopSelf(1)
-        }
-    }
-
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
@@ -108,8 +114,6 @@ class LocationServiceForeground : Service() {
     companion object {
         const val ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE"
         const val ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE"
-        const val ACTION_PAUSE = "ACTION_PAUSE"
-        const val ACTION_PLAY = "ACTION_PLAY"
         const val STATUS = "STATUS"
         const val FOREGROUND_SERVICE_CHANNEL = "FOREGROUND_SERVICE_CHANNEL"
     }

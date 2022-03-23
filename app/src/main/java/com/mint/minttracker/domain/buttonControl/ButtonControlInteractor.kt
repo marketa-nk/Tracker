@@ -6,5 +6,5 @@ interface ButtonControlInteractor {
 
     fun controlButtonPressed(status: Status): ButtonState
 
-    fun start(status: Status)
+    fun startLocationService(status: Status)
 }

@@ -40,8 +40,8 @@ class RecordFragment : Fragment() {
         super.onCreate(savedInstanceState)
         App.instance.appComponent.injectRecordFragment(this)
 
-        viewModel.data.observe(this, { record -> showRecordInfo(record) })
-        viewModel.points.observe(this, { points -> showPolyline(points) })
+        viewModel.data.observe(this) { record -> showRecordInfo(record) }
+        viewModel.points.observe(this) { points -> showPolyline(points) }
     }
 
     override fun onCreateView(
@@ -90,7 +90,7 @@ class RecordFragment : Fragment() {
 
         binding.mapView.getMapAsync { map ->
             map.addPolyline(list)
-            map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50))
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50))
         }
     }
 

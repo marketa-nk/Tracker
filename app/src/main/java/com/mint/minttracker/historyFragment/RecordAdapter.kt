@@ -28,8 +28,8 @@ class RecordsAdapter : ListAdapter<Record, RecordsAdapter.RecordViewHolder>(Reco
 
         fun bind(record: Record) {
             binding.date.text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(record.date)
-            binding.timeText.text = record.totalTimeMs.msToUiString()
-            binding.distanceText.text = "${(record.distance).toUiString()}м"
+            binding.timeText.text = record.durationMs.msToUiString()
+            binding.distanceText.text = "${(record.distanceKm).toUiString()}км"
             binding.speedAveText.text = "${(record.aveSpeedInKm).toUiString()}км/ч"
             binding.root.setOnClickListener {
                 recordListener?.onItemClick(record)

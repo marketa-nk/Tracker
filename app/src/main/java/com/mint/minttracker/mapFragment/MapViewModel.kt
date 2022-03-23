@@ -102,7 +102,7 @@ class MapViewModel(
             .subscribe({
                 if (it.status != Status.STATUS_FINISHED) {
                     showLastData(it)
-                    buttonControlInteractor.start(it.status)
+                    buttonControlInteractor.startLocationService(it.status)
                 }
                 buttonState.value = buttonControlInteractor.controlButtonPressed(it.status)
 
@@ -143,7 +143,7 @@ class MapViewModel(
 
     fun controlButtonPressed(status: Status) {
         buttonState.value = buttonControlInteractor.controlButtonPressed(status)
-        buttonControlInteractor.start(status)
+        buttonControlInteractor.startLocationService(status)
         if (status == Status.STATUS_STARTED) {
             points.clear()
             pointsLiveData.value = points

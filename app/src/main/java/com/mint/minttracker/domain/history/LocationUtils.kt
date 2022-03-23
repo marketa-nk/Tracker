@@ -1,6 +1,7 @@
 package com.mint.minttracker.domain.history
 
 import android.location.Location
+import com.mint.minttracker.getTotalTimeInMillis
 import com.mint.minttracker.models.MintLocation
 
 object LocationUtils {
@@ -27,6 +28,10 @@ object LocationUtils {
             distance += it.distanceTo(location)
         }
         return distance
+    }
+
+    fun calcAverageSpeed(list: List<MintLocation>): Double{
+        return calcDistanceMeters(list) / 1000 / list.getTotalTimeInMillis() * 3600000
     }
 
     fun MintLocation.distanceToMintlocationInM(mintLocation: MintLocation): Double {

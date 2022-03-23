@@ -29,13 +29,15 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
                                 maxSpeedInMeters = 0f
                             )
                         } else {
+                            val distance = LocationUtils.calcDistanceMeters(it.value)
+                            val durationMs = it.value.getTotalTimeInMillis()
                             Record(
                                 idTrack = it.key.id,
                                 date = it.value.first().time,
-                                distance = LocationUtils.calcDistanceMeters(it.value),
-                                durationMs = it.value.getTotalTimeInMillis(),
+                                distance = distance,
+                                durationMs = durationMs,
                                 totalTimeMs = it.value.last().time - it.value.first().time,
-                                aveSpeedInMeters = it.value.map { it.speedInMeters }.average(),
+                                aveSpeedInMeters = distance / durationMs * 1000,
                                 maxSpeedInMeters = it.value.maxOf { it.speedInMeters }
                             )
                         }

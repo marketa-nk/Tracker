@@ -14,14 +14,17 @@ class StopWatch @Inject constructor() {
         return state.getTimeMilliseconds()
     }
 
-    fun start(firstStart: Boolean, totalTimeInMillis: Long) {
+    fun start(millis: Long) {
         val state = state
         if (state is State.PAUSE) {
-            this.state = if (firstStart) {
-                State.START(System.currentTimeMillis(), totalTimeInMillis)
-            } else {
-                State.START(System.currentTimeMillis(), state.totalTimeInMillis)
-            }
+            this.state = State.START(System.currentTimeMillis(), millis)
+        }
+    }
+
+    fun start() {
+        val state = state
+        if (state is State.PAUSE) {
+            this.state = State.START(System.currentTimeMillis(), state.totalTimeInMillis)
         }
     }
 
