@@ -11,8 +11,8 @@ interface MintLocationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMintLocation(mintLocation: MintLocation): Single<Long>
 
-    @Delete
-    fun deleteMintLocations(list: List <MintLocation>): Single<Int>
+    @Query("DELETE FROM MintLocation where idTrack = :trackId")
+    fun deleteMintLocations(trackId: Long): Single<Int>
 
     @Query("SELECT * FROM mintLocation")
     fun getAllRecords(): List<MintLocation>

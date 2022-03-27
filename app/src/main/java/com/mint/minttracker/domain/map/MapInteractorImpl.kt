@@ -19,6 +19,13 @@ class MapInteractorImpl @Inject constructor(private val dataBaseRepository: Data
     override fun getAllLocationsById(id: Long): Single<List<MintLocation>> {
         return dataBaseRepository.getAllLocationsById(id)
     }
+
+    override fun deleteCurrentTrack(): Single<Int> {
+        return dataBaseRepository.getLastTrack()
+            .flatMap {
+                dataBaseRepository.deleteTrack(it)
+            }
+    }
 }
 
 

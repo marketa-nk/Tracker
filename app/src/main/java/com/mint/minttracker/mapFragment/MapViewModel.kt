@@ -37,6 +37,11 @@ class MapViewModel(
     val grantedPerm: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
     val time: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
     val distance: MutableLiveData<Double> by lazy { MutableLiveData<Double>() }
+    val showSaveDialog: SingleLiveEvent<String> by lazy { SingleLiveEvent() }
+    val startBlinkingAnimation: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
+    val vibrate: SingleLiveEvent<Boolean> by lazy { SingleLiveEvent() }
+    val messageDeleteEvent: SingleLiveEvent<String> = SingleLiveEvent()
+    val messageSaveEvent: SingleLiveEvent<String> = SingleLiveEvent()
 
     private val currentLocationDisposable = SerialDisposable()
 
@@ -142,12 +147,43 @@ class MapViewModel(
     }
 
     fun controlButtonPressed(status: Status) {
+        vibrate.value = true
+        if (status == Status.STATUS_FINISHED) {
+            showSaveDialog.value = SHOW_SAVE_DIALOG
+        } else {
+            buttonControlOperationsStart(status)
+            startBlinkingAnimation.value = status == Status.STATUS_PAUSED
+            if (status == Status.STATUS_STARTED) {
+                points.clear()
+                pointsLiveData.value = points
+            }
+        }
+    }
+
+    fun onDialogPositiveClick() {
+        buttonControlOperationsStart(Status.STATUS_FINISHED)
+        messageSaveEvent.value = "The current workout is saved."//todo to resources
+        startBlinkingAnimation.value = false
+    }
+
+    fun onDialogNegativeClick() {
+        buttonControlOperationsStart(Status.STATUS_FINISHED)
+        startBlinkingAnimation.value = false
+        mapInteractor.deleteCurrentTrack()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                messageDeleteEvent.value = "The current workout was deleted."
+            }, {
+                messageDeleteEvent.value = "Error deleting"
+                it.printStackTrace()
+            })
+            .addDisposable()
+    }
+
+    private fun buttonControlOperationsStart(status: Status){
         buttonState.value = buttonControlInteractor.controlButtonPressed(status)
         buttonControlInteractor.startLocationService(status)
-        if (status == Status.STATUS_STARTED) {
-            points.clear()
-            pointsLiveData.value = points
-        }
     }
 
     fun historyButtonPressed() {
@@ -178,5 +214,6 @@ class MapViewModel(
 
     companion object {
         const val SHOW_HISTORY_FRAGMENT = "SHOW_HISTORY_FRAGMENT"
+        const val SHOW_SAVE_DIALOG = "SHOW_SAVE_DIALOG"
     }
 }

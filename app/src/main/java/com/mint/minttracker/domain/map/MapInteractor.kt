@@ -8,4 +8,5 @@ interface MapInteractor {
     fun getLastTrack(): Single<Track>
     fun updateTrack(track: Track): Single<Track>
     fun getAllLocationsById(id: Long): Single<List<MintLocation>>
+    fun deleteCurrentTrack(): Single<Int>
 }

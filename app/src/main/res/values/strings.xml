@@ -24,4 +24,9 @@
     <string name="duration_data">00h 00m 00s</string>
     <string name="speed_data">0,0 km/h</string>
     <string name="date_data">00 month year</string>
+    <string name="dialog_message">Do you want to save this workout?</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="choose_an_action">Choose an action</string>
 </resources>

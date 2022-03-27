@@ -53,6 +53,9 @@ class DataBaseRepositoryImpl @Inject constructor(
 
     override fun deleteTrack(track: Track): Single<Int> {
         return tracksDao.deleteTrack(track).also { println("$track is deleted - Nata") }
+            .flatMap {
+                locationDao.deleteMintLocations(track.id)
+            }
     }
 
     override fun getTrackById(id: Long): Single<Track> {

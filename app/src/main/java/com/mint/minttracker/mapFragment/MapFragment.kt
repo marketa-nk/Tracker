@@ -11,11 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,11 +32,12 @@ import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.domain.buttonControl.ButtonState
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Status
+import com.mint.minttracker.saveDialogFragment.SaveDialogFragment
 import com.mint.minttracker.secToUiString
 import com.mint.minttracker.toUiString
 import javax.inject.Inject
 
-class MapFragment : Fragment() {
+class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
 
     @Inject
     lateinit var factory: MapViewModel.MapViewModelFactory
@@ -57,6 +60,12 @@ class MapFragment : Fragment() {
         viewModel.showHistoryEvent.observe(this) {
             if (it == MapViewModel.SHOW_HISTORY_FRAGMENT) {
                 navigateToHistoryFragment()
+            }
+        }
+        viewModel.showSaveDialog.observe(this) {
+            if (it == MapViewModel.SHOW_SAVE_DIALOG) {
+                val dialog = SaveDialogFragment()
+                dialog.show(childFragmentManager, "SaveDialogFragment")
             }
         }
 
@@ -143,7 +152,7 @@ class MapFragment : Fragment() {
         viewModel.time.observe(this.viewLifecycleOwner) {
             binding.totalTimeData.text = it.secToUiString()
         }
-        viewModel.distance.observe(this.viewLifecycleOwner){
+        viewModel.distance.observe(this.viewLifecycleOwner) {
             binding.distanceData.text = (it / 1000).toUiString()
         }
 
@@ -250,6 +259,18 @@ class MapFragment : Fragment() {
 
     private fun navigateToHistoryFragment() {
         binding.root.findNavController().navigate(R.id.action_fragment_map_to_historyFragment)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDialogPositiveClick() {
+        viewModel.onDialogPositiveClick()
+    }
+
+    override fun onDialogNegativeClick() {
+        viewModel.onDialogNegativeClick()
     }
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
