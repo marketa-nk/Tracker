@@ -6,7 +6,10 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -155,6 +158,16 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
         viewModel.distance.observe(this.viewLifecycleOwner) {
             binding.distanceData.text = (it / 1000).toUiString()
         }
+        viewModel.startBlinkingAnimation.observe(this.viewLifecycleOwner) {
+            startBlinkingAnimation(it)
+        }
+        viewModel.vibrate.observe(this.viewLifecycleOwner) {
+            if (it) {
+                vibrate()
+            }
+        }
+        viewModel.messageSaveEvent.observe(this.viewLifecycleOwner) { message -> showToast(message) }
+        viewModel.messageDeleteEvent.observe(this.viewLifecycleOwner) { message -> showToast(message) }
 
         binding.start.setOnClickListener {
             viewModel.controlButtonPressed(Status.STATUS_STARTED)
@@ -251,6 +264,26 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
         visibilityPauseButton(buttonState.pause)
         visibilityResumeButton(buttonState.resume)
         visibilityStopButton(buttonState.stop)
+    }
+
+    private fun startBlinkingAnimation(start: Boolean) {
+        if (start) {
+            binding.constraintLayoutMetrics.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.blink))
+        } else {
+            binding.constraintLayoutMetrics.clearAnimation()
+        }
+    }
+
+    private fun vibrate() {
+        val vibrator = getSystemService(requireContext(), Vibrator::class.java)
+        vibrator?.let {
+            if (Build.VERSION.SDK_INT >= 26) {
+                it.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                it.vibrate(100)
+            }
+        }
     }
 
     private fun showData(mintLocation: MintLocation) {
