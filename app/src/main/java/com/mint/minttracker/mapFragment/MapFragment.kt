@@ -81,7 +81,7 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
     }
 
     private fun addSettingsToMap() {
-        binding.mapView.getMapAsync { googleMap ->
+        mapView?.getMapAsync { googleMap ->
             googleMap.apply {
                 isMyLocationEnabled = !(ActivityCompat.checkSelfPermission(requireContext().applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext().applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                 uiSettings.isMyLocationButtonEnabled = true
@@ -103,19 +103,19 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
 
     override fun onStart() {
         super.onStart()
-        binding.mapView.onStart()
+        mapView?.onStart()
         println("onStart Nata")
     }
 
     override fun onResume() {
         super.onResume()
-        binding.mapView.onResume()
+        mapView?.onResume()
         println("onResume Nata")
     }
 
     override fun onPause() {
         super.onPause()
-        binding.mapView.onPause()
+        mapView?.onPause()
         println("onPause Nata")
     }
 
@@ -125,15 +125,18 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
     ): View {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
 
-        mapView = binding.mapView
-        binding.mapView.onCreate(savedInstanceState)
+        if (mapView == null) {
+            mapView = MapView(requireContext())
+            mapView?.onCreate(savedInstanceState)
+        }
+        binding.mapViewContainer.addView(mapView!!)
 
         viewModel.pointsLiveData.observe(this.viewLifecycleOwner) { points ->
             updatePolyline(points)
         }
         viewModel.lastLocation.observe(this.viewLifecycleOwner) { location ->
             showData(location)
-            binding.mapView.getMapAsync { googleMap ->
+            mapView?.getMapAsync { googleMap ->
                 googleMap.apply {
                     animateCamera(CameraUpdateFactory.newLatLngZoom(location.latLng, 17.0f))
                 }
@@ -317,23 +320,25 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
 
     override fun onLowMemory() {
         super.onLowMemory()
-        binding.mapView.onLowMemory()
+        mapView?.onLowMemory()
     }
 
     override fun onStop() {
         super.onStop()
-        binding.mapView.onStop()
+        mapView?.onStop()
         println("onStop Nata")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.mapViewContainer.removeAllViews()
         _binding = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mapView?.onDestroy()
+        mapView = null
         println("onDestroy Nata")
     }
 }

@@ -8,14 +8,14 @@
     tools:context=".mapFragment.MapFragment">
 
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/map_view"
-        android:name="com.google.android.gms.maps.MapView"
+    <FrameLayout
+        android:id="@+id/map_view_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        app:layout_constraintEnd_toStartOf="@id/constraint_layout_metrics"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/constraint_layout_metrics"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/history"
@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/constraint_layout_btns"
-        app:layout_constraintStart_toEndOf="@id/map_view">
+        app:layout_constraintStart_toEndOf="@id/map_view_container">
 
         <TextView
             android:id="@+id/distance_data"
