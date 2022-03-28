@@ -42,7 +42,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/total_time_data"
+            android:id="@+id/distance_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -50,36 +50,10 @@
             android:fontFamily="sans-serif-smallcaps"
             android:gravity="center"
             android:padding="5dp"
-            android:textSize="24sp"
-            android:text="@string/start_time"
-            app:layout_constraintEnd_toStartOf="@id/distance_data"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/total_time_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-smallcaps"
-            android:gravity="center"
-            android:text="@string/time"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@id/total_time_data"
-            app:layout_constraintStart_toStartOf="@id/total_time_data"
-            app:layout_constraintTop_toBottomOf="@id/total_time_data" />
-
-        <TextView
-            android:id="@+id/distance_data"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif-smallcaps"
-            android:gravity="center"
-            android:padding="5dp"
             android:text="@string/start_distance"
             android:textSize="24sp"
-            app:layout_constraintEnd_toStartOf="@id/speed_data"
-            app:layout_constraintStart_toEndOf="@id/total_time_data"
+            app:layout_constraintEnd_toStartOf="@id/total_time_data"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -95,6 +69,32 @@
             app:layout_constraintTop_toBottomOf="@id/distance_data" />
 
         <TextView
+            android:id="@+id/total_time_data"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="@string/start_time"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@id/speed_data"
+            app:layout_constraintStart_toEndOf="@id/distance_data"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/total_time_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:text="@string/time"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/total_time_data"
+            app:layout_constraintStart_toStartOf="@id/total_time_data"
+            app:layout_constraintTop_toBottomOf="@id/total_time_data" />
+
+        <TextView
             android:id="@+id/speed_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -103,10 +103,10 @@
             android:fontFamily="sans-serif-smallcaps"
             android:gravity="center"
             android:padding="5dp"
-            android:textSize="24sp"
             android:text="@string/start_speed"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/distance_data"
+            app:layout_constraintStart_toEndOf="@id/total_time_data"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -148,9 +148,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="64dp"
             android:layout_marginBottom="48dp"
-            android:visibility="gone"
             android:background="@drawable/img_circle_100"
             android:src="@drawable/ic_round_play_arrow_48"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -161,9 +161,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="64dp"
             android:layout_marginBottom="48dp"
-            android:visibility="gone"
             android:background="@drawable/img_circle_100"
             android:src="@drawable/ic_round_pause_48"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -173,9 +173,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="58dp"
-            android:visibility="gone"
             android:background="@drawable/img_circle_80_blue"
             android:src="@drawable/ic_round_play_arrow_48"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/stop"
             app:layout_constraintStart_toStartOf="parent" />
@@ -185,9 +185,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="58dp"
-            android:visibility="gone"
             android:background="@drawable/img_circle_80_white"
             android:src="@drawable/ic_round_stop_48"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/resume" />

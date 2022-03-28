@@ -20,10 +20,10 @@ class SaveDialogFragment : DialogFragment() {
             AlertDialog.Builder(it)
                 .setTitle(getString(R.string.choose_an_action))
                 .setMessage(R.string.dialog_message)
-                .setPositiveButton(R.string.save) { dialog, id ->
+                .setPositiveButton(R.string.save) { _, _ ->
                     listener.onDialogPositiveClick()
                 }
-                .setNeutralButton(R.string.delete) { dialog, id ->
+                .setNeutralButton(R.string.delete) { _, _ ->
                     listener.onDialogNegativeClick()
                 }
                 .create()

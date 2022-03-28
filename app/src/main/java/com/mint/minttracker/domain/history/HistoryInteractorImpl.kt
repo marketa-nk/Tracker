@@ -31,13 +31,18 @@ class HistoryInteractorImpl @Inject constructor(private val dataBaseRepository: 
                         } else {
                             val distance = LocationUtils.calcDistanceMeters(it.value)
                             val durationMs = it.value.getTotalTimeInMillis()
+                            val aveSpeedInMeters = if (durationMs > 0) {
+                                distance / durationMs * 1000
+                            } else {
+                                0.0
+                            }
                             Record(
                                 idTrack = it.key.id,
                                 date = it.value.first().time,
                                 distance = distance,
                                 durationMs = durationMs,
                                 totalTimeMs = it.value.last().time - it.value.first().time,
-                                aveSpeedInMeters = distance / durationMs * 1000,
+                                aveSpeedInMeters = aveSpeedInMeters,
                                 maxSpeedInMeters = it.value.maxOf { it.speedInMeters }
                             )
                         }
