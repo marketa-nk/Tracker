@@ -35,11 +35,12 @@ class MapViewModel(
     val showHistoryEvent: SingleLiveEvent<String> by lazy { SingleLiveEvent() }
     val buttonState: MutableLiveData<ButtonState> by lazy { MutableLiveData<ButtonState>() }
     val grantedPerm: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
+    val requireLocationPermissionEvent: SingleLiveEvent<Unit> by lazy { SingleLiveEvent() }
     val time: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
     val distance: MutableLiveData<Double> by lazy { MutableLiveData<Double>() }
     val showSaveDialog: SingleLiveEvent<String> by lazy { SingleLiveEvent() }
     val startBlinkingAnimation: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
-    val vibrate: SingleLiveEvent<Boolean> by lazy { SingleLiveEvent() }
+    val vibrate: SingleLiveEvent<Unit> by lazy { SingleLiveEvent() }
     val messageDeleteEvent: SingleLiveEvent<String> = SingleLiveEvent()
     val messageSaveEvent: SingleLiveEvent<String> = SingleLiveEvent()
 
@@ -147,7 +148,7 @@ class MapViewModel(
     }
 
     fun controlButtonPressed(status: Status) {
-        vibrate.value = true
+        vibrate.value = Unit
         if (status == Status.STATUS_FINISHED) {
             showSaveDialog.value = SHOW_SAVE_DIALOG
         } else {
@@ -181,7 +182,7 @@ class MapViewModel(
             .addDisposable()
     }
 
-    private fun buttonControlOperationsStart(status: Status){
+    private fun buttonControlOperationsStart(status: Status) {
         buttonState.value = buttonControlInteractor.controlButtonPressed(status)
         buttonControlInteractor.startLocationService(status)
     }
@@ -196,6 +197,10 @@ class MapViewModel(
 
     fun cameraIsMovedByGesture() {
         currentLocationDisposable.set(null)
+    }
+
+    fun fakeStartPressed() {
+        requireLocationPermissionEvent.value = Unit
     }
 
     class MapViewModelFactory @Inject constructor(

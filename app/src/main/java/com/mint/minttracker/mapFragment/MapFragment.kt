@@ -1,10 +1,7 @@
 package com.mint.minttracker.mapFragment
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -81,7 +78,6 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
                 viewModel.permissionGranted(false)
             }
         }
-        requireLocationPermission()
     }
 
     private fun addSettingsToMap() {
@@ -150,8 +146,14 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
             if (granted) {
                 addSettingsToMap()
                 binding.fakeStart.isVisible = false
+            } else {
+                binding.fakeStart.isVisible = true
             }
         }
+        viewModel.requireLocationPermissionEvent.observe(this.viewLifecycleOwner) {
+            requireLocationPermission()
+        }
+
         viewModel.time.observe(this.viewLifecycleOwner) {
             binding.totalTimeData.text = it.secToUiString()
         }
@@ -162,9 +164,7 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
             startBlinkingAnimation(it)
         }
         viewModel.vibrate.observe(this.viewLifecycleOwner) {
-            if (it) {
-                vibrate()
-            }
+            vibrate()
         }
         viewModel.messageSaveEvent.observe(this.viewLifecycleOwner) { message -> showToast(message) }
         viewModel.messageDeleteEvent.observe(this.viewLifecycleOwner) { message -> showToast(message) }
@@ -188,6 +188,9 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
         binding.history.setOnClickListener {
             viewModel.historyButtonPressed()
         }
+        binding.fakeStart.setOnClickListener {
+            viewModel.fakeStartPressed()
+        }
         println("onCreateView Nata")
 
         return binding.root
@@ -196,28 +199,29 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
     private fun requireLocationPermission() {
         when {
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED -> {
-                // You can use the API that requires the permission.
                 viewModel.permissionGranted(true)
             }
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Данному приложению требуется разрешение на местоположения")
-                    .setMessage("Показать диалог с запросом разрешения?")
-                    .setPositiveButton("Да") { _, _ ->
-                        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                    }
-                    .setNegativeButton("Нет, спасибо") { _, _ ->
-                        viewModel.permissionGranted(false)
-                    }
-                    .create()
-                    .show()
+                showPermissionAlertDialog()
             }
             else -> {
-                // You can directly ask for the permission.
-                // The registered ActivityResultCallback gets the result of this request.
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }
         }
+    }
+
+    private fun showPermissionAlertDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("This app needs location permission.")
+            .setMessage("Show location permission dialog?")
+            .setPositiveButton("Yes") { _, _ ->
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            .setNegativeButton("No, thanks") { _, _ ->
+                viewModel.permissionGranted(false)
+            }
+            .create()
+            .show()
     }
 
     private fun GoogleMap.addPolyline(): Polyline {
@@ -306,15 +310,6 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
         viewModel.onDialogNegativeClick()
     }
 
-    private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
-        val vectorDrawable = ContextCompat.getDrawable(context, vectorResId)
-        vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
-        val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        vectorDrawable.draw(canvas)
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mapView?.onSaveInstanceState(outState)
@@ -338,7 +333,7 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        mapView?.onDestroy()//todo check this cause
+        mapView?.onDestroy()
         println("onDestroy Nata")
     }
 }
