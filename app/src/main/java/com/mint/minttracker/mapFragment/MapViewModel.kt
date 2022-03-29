@@ -36,6 +36,7 @@ class MapViewModel(
     val buttonState: MutableLiveData<ButtonState> by lazy { MutableLiveData<ButtonState>() }
     val grantedPerm: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
     val requireLocationPermissionEvent: SingleLiveEvent<Unit> by lazy { SingleLiveEvent() }
+    val checkLocationPermissionEvent: SingleLiveEvent<Unit> by lazy { SingleLiveEvent<Unit>() }
     val time: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
     val distance: MutableLiveData<Double> by lazy { MutableLiveData<Double>() }
     val showSaveDialog: SingleLiveEvent<String> by lazy { SingleLiveEvent() }
@@ -47,6 +48,7 @@ class MapViewModel(
     private val currentLocationDisposable = SerialDisposable()
 
     init {
+        checkLocationPermissionEvent.value = Unit
         getPointsForPolyline()
         getDistanse()
         tracker.timeInSec

@@ -25,7 +25,9 @@ import androidx.navigation.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.mint.minttracker.App
 import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentMapBinding
@@ -153,10 +155,13 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
                 binding.fakeStart.isVisible = true
             }
         }
+
+        viewModel.checkLocationPermissionEvent.observe(this.viewLifecycleOwner) {
+            viewModel.permissionGranted(checkLocationPermission())
+        }
         viewModel.requireLocationPermissionEvent.observe(this.viewLifecycleOwner) {
             requireLocationPermission()
         }
-
         viewModel.time.observe(this.viewLifecycleOwner) {
             binding.totalTimeData.text = it.secToUiString()
         }
@@ -186,7 +191,6 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
 
         binding.stop.setOnClickListener {
             viewModel.controlButtonPressed(Status.STATUS_FINISHED)
-
         }
         binding.history.setOnClickListener {
             viewModel.historyButtonPressed()
@@ -211,6 +215,10 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
                 requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }
         }
+    }
+
+    private fun checkLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun showPermissionAlertDialog() {
