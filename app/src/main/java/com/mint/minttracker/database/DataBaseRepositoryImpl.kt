@@ -18,7 +18,6 @@ class DataBaseRepositoryImpl @Inject constructor(
                 locationDao.insertMintLocation(locationForInsert)
                     .map { locationId -> locationForInsert.copy(id = locationId) }
             }
-            .doOnSuccess { println("nata - saved $it, segment - ${it.segment}") }
     }
 
     override fun getAllLocationsById(id: Long): Single<List<MintLocation>> {
@@ -31,28 +30,23 @@ class DataBaseRepositoryImpl @Inject constructor(
 
     override fun createTrack(): Single<Long> {
         return tracksDao.insertTrack(Track(0, System.currentTimeMillis(), Status.STATUS_STARTED))
-            .doOnSuccess { println("Track created - Nata") }
     }
 
     override fun updateTrack(track: Track): Single<Track> {
         return tracksDao.updateTrack(track)
             .andThen(Single.just(track))
-            .doOnSuccess { println("Track updated - Nata") }
-
     }
 
     override fun getLastTrack(): Single<Track> {
         return tracksDao.getLastTrack()
-            .doOnSuccess { println("Track got last one track - Nata") }
     }
 
     override fun getAllTracks(): Observable<List<Track>> {
         return tracksDao.getAllTracks()
-            .doOnNext { println("You've got all tracks - Nata") }
     }
 
     override fun deleteTrack(track: Track): Single<Int> {
-        return tracksDao.deleteTrack(track).also { println("$track is deleted - Nata") }
+        return tracksDao.deleteTrack(track)
             .flatMap {
                 locationDao.deleteMintLocations(track.id)
             }

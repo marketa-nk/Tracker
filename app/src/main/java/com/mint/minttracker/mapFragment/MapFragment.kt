@@ -34,7 +34,6 @@ import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.domain.buttonControl.ButtonState
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Status
-import com.mint.minttracker.saveDialogFragment.SaveDialogFragment
 import com.mint.minttracker.secToUiString
 import com.mint.minttracker.toUiString
 import javax.inject.Inject
@@ -56,7 +55,6 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("onCreate Nata")
         App.instance.appComponent.injectMapFragment(this)
 
         viewModel.showHistoryEvent.observe(this) {
@@ -106,19 +104,16 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
     override fun onStart() {
         super.onStart()
         mapView?.onStart()
-        println("onStart Nata")
     }
 
     override fun onResume() {
         super.onResume()
         mapView?.onResume()
-        println("onResume Nata")
     }
 
     override fun onPause() {
         super.onPause()
         mapView?.onPause()
-        println("onPause Nata")
     }
 
     override fun onCreateView(
@@ -198,7 +193,6 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
         binding.fakeStart.setOnClickListener {
             viewModel.fakeStartPressed()
         }
-        println("onCreateView Nata")
 
         return binding.root
     }
@@ -334,7 +328,6 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
     override fun onStop() {
         super.onStop()
         mapView?.onStop()
-        println("onStop Nata")
     }
 
     override fun onDestroyView() {
@@ -347,6 +340,5 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
         super.onDestroy()
         mapView?.onDestroy()
         mapView = null
-        println("onDestroy Nata")
     }
 }

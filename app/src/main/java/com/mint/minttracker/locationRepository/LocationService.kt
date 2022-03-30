@@ -28,7 +28,6 @@ class LocationService @Inject constructor(context: Context) : LocationRepository
             val callback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
-                    println("getLocationUpdates locationResult - nata")
                     val location: Location? = locationResult.lastLocation
                     if (location != null) {
                         emitter.onNext(location)

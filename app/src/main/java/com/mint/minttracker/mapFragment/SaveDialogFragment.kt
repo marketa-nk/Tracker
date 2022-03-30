@@ -1,4 +1,4 @@
-package com.mint.minttracker.saveDialogFragment
+package com.mint.minttracker.mapFragment
 
 import android.app.AlertDialog
 import android.app.Dialog

@@ -67,19 +67,16 @@ class RecordFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
-        println("onStart RecordFragment Nata")
     }
 
     override fun onResume() {
         super.onResume()
         binding.mapView.onResume()
-        println("onResume RecordFragment Nata")
     }
 
     override fun onPause() {
         super.onPause()
         binding.mapView.onPause()
-        println("onPause RecordFragment Nata")
     }
 
     private fun showPolyline(list: List<LatLng>) {
@@ -126,7 +123,6 @@ class RecordFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         binding.mapView.onStop()
-        println("onStop RecordFragment Nata")
     }
 
     override fun onDestroyView() {
@@ -137,7 +133,6 @@ class RecordFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         binding.mapView.onDestroy()
-        println("onDestroy RecordFragment Nata")
     }
 
     companion object {

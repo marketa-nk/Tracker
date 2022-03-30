@@ -71,7 +71,6 @@ class Tracker @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 saveLocationUpdates(it, 0)
-                println("nata - segment 0")
             }, {
                 it.printStackTrace()
             })
@@ -90,7 +89,6 @@ class Tracker @Inject constructor(
             .observeOn(Schedulers.io())
             .subscribe({
                 saveLocationUpdates(it.idTrack, it.segment + 1)
-                println("nata - segment ${it.segment} + 1")
             }, {
                 it.printStackTrace()
             })
@@ -110,7 +108,6 @@ class Tracker @Inject constructor(
                 } else {
                     dataBaseRepository.updateTrack(Track(track.id, track.date, status))
                         .doOnSuccess {
-                            println("$status onStopTracker статус $status Nata")
                         }
                 }
             }

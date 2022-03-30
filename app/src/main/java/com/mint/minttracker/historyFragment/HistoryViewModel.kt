@@ -28,7 +28,6 @@ class HistoryViewModel @Inject constructor(private val historyInteractor: Histor
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                println("RecordList ${it.size} - nata")
                 records.value = it
                 listIsEmpty.value = it.isEmpty()
             }, {
@@ -46,7 +45,7 @@ class HistoryViewModel @Inject constructor(private val historyInteractor: Histor
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                messageEvent.value = "The workout was deleted." //todo to resources
+                messageEvent.value = "The workout was deleted."
             }, {
                 messageEvent.value = "Error deleting"
                 it.printStackTrace()
