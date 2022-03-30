@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "936845936801",
+    "project_id": "minttracker",
+    "storage_bucket": "minttracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936845936801:android:c81cacd2c773954198c8e0",
+        "android_client_info": {
+          "package_name": "com.mint.minttracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936845936801-o4d77p1rrknl0fm84k2ju54go147lajr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF-dEbbCzgtsD6lLFdui-x2Ixns-91UUw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "936845936801-o4d77p1rrknl0fm84k2ju54go147lajr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
