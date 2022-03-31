@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,6 +38,7 @@ import com.mint.minttracker.models.Status
 import com.mint.minttracker.secToUiString
 import com.mint.minttracker.toUiString
 import javax.inject.Inject
+
 
 class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
 
@@ -99,6 +101,14 @@ class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
                 polyline = addPolyline()
             }
         }
+        val compassButton: View = binding.mapViewContainer.findViewWithTag("GoogleMapCompass") //to access the compass button
+
+        val rlp = compassButton.layoutParams as RelativeLayout.LayoutParams
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_END)
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP)
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_START, 0)
+        rlp.topMargin = 175
+        rlp.marginEnd = 32
     }
 
     override fun onStart() {
