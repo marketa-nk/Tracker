@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>EmptyDefaultConstructor:InteractorModule.kt$InteractorModule$()</ID>
+    <ID>FunctionNaming:HistoryEmptyView.kt$@Composable fun HistoryEmptyView()</ID>
+    <ID>FunctionNaming:HistoryFragment.kt$@Composable fun HistoryScreen( viewModel: HistoryViewModel, navController: NavController, // onBackPressed: () -&gt; Unit )</ID>
+    <ID>FunctionNaming:HistoryFragment.kt$@Composable fun HistoryView( records: List&lt;Record&gt;?, btnDeleteVisible: Boolean, onRecordClick: (Record) -&gt; Unit, onRecordLongClick: (Record) -&gt; Unit, onDeleteClick: () -&gt; Unit, onBackClick: () -&gt; Unit )</ID>
+    <ID>FunctionNaming:HistoryItem.kt$@Composable fun HistorySmallItem( drawableResource: Int, text: String, modifier: Modifier = Modifier )</ID>
+    <ID>FunctionNaming:HistoryItem.kt$@OptIn(ExperimentalFoundationApi::class) @Composable fun HistoryItem( record: Record, onClick: (Record) -&gt; Unit, onLongClick: (Record) -&gt; Unit )</ID>
+    <ID>FunctionNaming:HistoryListView.kt$@Composable fun HistoryListView( records: List&lt;Record&gt;, onClick:(Record) -&gt; Unit, onLongClick: (Record) -&gt; Unit )</ID>
+    <ID>FunctionNaming:HistoryToolbar.kt$@Composable fun HistoryToolbar( btnDeleteVisible: Boolean, onBackClick:() -&gt; Unit, onDeleteClick: () -&gt; Unit )</ID>
+    <ID>FunctionNaming:HistoryToolbar.kt$@Composable fun TopAppBarActionButton( imageVector: ImageVector, description: String, onClick: () -&gt; Unit )</ID>
+    <ID>FunctionNaming:Theme.kt$@Composable internal fun MainTheme( content: @Composable () -&gt; Unit )</ID>
+    <ID>LongMethod:MapFragment.kt$MapFragment$override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View</ID>
+    <ID>MagicNumber:Color.kt$0xFF000000</ID>
+    <ID>MagicNumber:Color.kt$0xFFE64A19</ID>
+    <ID>MagicNumber:Color.kt$0xFFFF6D00</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFFFFF</ID>
+    <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided&gt;$4</ID>
+    <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided&gt;$5</ID>
+    <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided&gt;$6</ID>
+    <ID>MagicNumber:FormatUtils.kt$10</ID>
+    <ID>MagicNumber:FormatUtils.kt$100.0</ID>
+    <ID>MagicNumber:FormatUtils.kt$1000</ID>
+    <ID>MagicNumber:FormatUtils.kt$24</ID>
+    <ID>MagicNumber:FormatUtils.kt$60</ID>
+    <ID>MagicNumber:HistoryInteractorImpl.kt$HistoryInteractorImpl$1000</ID>
+    <ID>MagicNumber:HistoryViewModel.kt$HistoryViewModel$5000</ID>
+    <ID>MagicNumber:LocationService.kt$LocationService$100</ID>
+    <ID>MagicNumber:LocationService.kt$LocationService$50</ID>
+    <ID>MagicNumber:LocationUtils.kt$LocationUtils$1000</ID>
+    <ID>MagicNumber:LocationUtils.kt$LocationUtils$3600000</ID>
+    <ID>MagicNumber:MapFragment.kt$MapFragment$100</ID>
+    <ID>MagicNumber:MapFragment.kt$MapFragment$1000</ID>
+    <ID>MagicNumber:MapFragment.kt$MapFragment$15.0F</ID>
+    <ID>MagicNumber:MapFragment.kt$MapFragment$17.0f</ID>
+    <ID>MagicNumber:MapFragment.kt$MapFragment$175</ID>
+    <ID>MagicNumber:MapFragment.kt$MapFragment$26</ID>
+    <ID>MagicNumber:MapFragment.kt$MapFragment$32</ID>
+    <ID>MagicNumber:MapFragment.kt$MapFragment$500</ID>
+    <ID>MagicNumber:MintLocation.kt$MintLocation$3.6f</ID>
+    <ID>MagicNumber:Record.kt$Record$1000</ID>
+    <ID>MagicNumber:Record.kt$Record$3.6</ID>
+    <ID>MagicNumber:RecordFragment.kt$RecordFragment$15.0F</ID>
+    <ID>MagicNumber:RecordFragment.kt$RecordFragment$50</ID>
+    <ID>MagicNumber:StopWatch.kt$StopWatch$1000</ID>
+    <ID>MagicNumber:Tracker.kt$Tracker$200</ID>
+    <ID>MagicNumber:build.gradle.kts$26</ID>
+    <ID>MagicNumber:build.gradle.kts$33</ID>
+    <ID>MatchingDeclarationName:ExampleUnitTest.kt$StopWatchTest</ID>
+    <ID>MatchingDeclarationName:RecordAdapter.kt$RecordsAdapter : ListAdapter</ID>
+    <ID>MaxLineLength:DatabaseModule.kt$DatabaseModule.&lt;no name provided&gt;$database.execSQL("CREATE TABLE IF NOT EXISTS `track_new` (`idTrack` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER NOT NULL, `status` TEXT NOT NULL)")</ID>
+    <ID>MaxLineLength:DistanceCalculator.kt$DistanceCalculator$val distanceFromPreviousLocationInM = currentLocation.distanceToMintlocationInM(lastLocationUsedForDistanceTraveled!!)</ID>
+    <ID>MaxLineLength:HistoryFragment.kt$HistoryFragment$// binding.recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)</ID>
+    <ID>MaxLineLength:HistoryInteractorImpl.kt$HistoryInteractorImpl$class</ID>
+    <ID>MaxLineLength:LocationInteractorImpl.kt$LocationInteractorImpl$MintLocation(0, 0, 0, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy)</ID>
+    <ID>MaxLineLength:LocationService.kt$LocationService$emitter.onSuccess(MintLocation(0, -1, -1, location.time, location.latitude, location.longitude, location.altitude, location.speed, location.bearing, location.accuracy))</ID>
+    <ID>MaxLineLength:MapFragment.kt$MapFragment$ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED</ID>
+    <ID>MaxLineLength:MapFragment.kt$MapFragment$isMyLocationEnabled = !(ActivityCompat.checkSelfPermission(requireContext().applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &amp;&amp; ActivityCompat.checkSelfPermission(requireContext().applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)</ID>
+    <ID>MaxLineLength:MapFragment.kt$MapFragment$return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED</ID>
+    <ID>MaxLineLength:MapFragment.kt$MapFragment$val compassButton: View = binding.mapViewContainer.findViewWithTag("GoogleMapCompass") //to access the compass button</ID>
+    <ID>MaxLineLength:RecordAdapter.kt$RecordsAdapter.RecordViewHolder$// binding.date.text = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(record.date)</ID>
+    <ID>MaxLineLength:RecordFragment.kt$RecordFragment$binding.myToolbar.title = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(record.date)</ID>
+    <ID>NewLineAtEndOfFile:App.kt$com.mint.minttracker.App.kt</ID>
+    <ID>NewLineAtEndOfFile:AppComponent.kt$com.mint.minttracker.di.components.AppComponent.kt</ID>
+    <ID>NewLineAtEndOfFile:BaseViewModel.kt$com.mint.minttracker.BaseViewModel.kt</ID>
+    <ID>NewLineAtEndOfFile:ButtonControlInteractor.kt$com.mint.minttracker.domain.buttonControl.ButtonControlInteractor.kt</ID>
+    <ID>NewLineAtEndOfFile:ButtonControlInteractorImpl.kt$com.mint.minttracker.domain.buttonControl.ButtonControlInteractorImpl.kt</ID>
+    <ID>NewLineAtEndOfFile:ButtonState.kt$com.mint.minttracker.domain.buttonControl.ButtonState.kt</ID>
+    <ID>NewLineAtEndOfFile:Color.kt$com.mint.minttracker.theme.Color.kt</ID>
+    <ID>NewLineAtEndOfFile:Common.kt$com.mint.minttracker.theme.Common.kt</ID>
+    <ID>NewLineAtEndOfFile:DataBaseRepository.kt$com.mint.minttracker.database.DataBaseRepository.kt</ID>
+    <ID>NewLineAtEndOfFile:DataBaseRepositoryImpl.kt$com.mint.minttracker.database.DataBaseRepositoryImpl.kt</ID>
+    <ID>NewLineAtEndOfFile:DatabaseModule.kt$com.mint.minttracker.di.modules.DatabaseModule.kt</ID>
+    <ID>NewLineAtEndOfFile:DistanceCalculator.kt$com.mint.minttracker.services.DistanceCalculator.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleInstrumentedTest.kt$com.mint.minttracker.ExampleInstrumentedTest.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleUnitTest.kt$com.mint.minttracker.ExampleUnitTest.kt</ID>
+    <ID>NewLineAtEndOfFile:HistoryEmptyView.kt$com.mint.minttracker.historyFragment.HistoryEmptyView.kt</ID>
+    <ID>NewLineAtEndOfFile:HistoryInteractorImpl.kt$com.mint.minttracker.domain.history.HistoryInteractorImpl.kt</ID>
+    <ID>NewLineAtEndOfFile:HistoryItem.kt$com.mint.minttracker.historyFragment.HistoryItem.kt</ID>
+    <ID>NewLineAtEndOfFile:HistoryListView.kt$com.mint.minttracker.historyFragment.HistoryListView.kt</ID>
+    <ID>NewLineAtEndOfFile:HistoryToolbar.kt$com.mint.minttracker.historyFragment.HistoryToolbar.kt</ID>
+    <ID>NewLineAtEndOfFile:LocationUtils.kt$com.mint.minttracker.domain.history.LocationUtils.kt</ID>
+    <ID>NewLineAtEndOfFile:MainActivity.kt$com.mint.minttracker.MainActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:MapFragment.kt$com.mint.minttracker.mapFragment.MapFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:MintLocation.kt$com.mint.minttracker.models.MintLocation.kt</ID>
+    <ID>NewLineAtEndOfFile:RecordAdapter.kt$com.mint.minttracker.historyFragment.RecordAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:RecordFragment.kt$com.mint.minttracker.recordFragment.RecordFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:RecordViewModelFactory.kt$com.mint.minttracker.recordFragment.RecordViewModelFactory.kt</ID>
+    <ID>NewLineAtEndOfFile:SaveDialogFragment.kt$com.mint.minttracker.mapFragment.SaveDialogFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:StopWatch.kt$com.mint.minttracker.services.StopWatch.kt</ID>
+    <ID>NewLineAtEndOfFile:Theme.kt$com.mint.minttracker.theme.Theme.kt</ID>
+    <ID>NewLineAtEndOfFile:Track.kt$com.mint.minttracker.models.Track.kt</ID>
+    <ID>NewLineAtEndOfFile:Tracker.kt$com.mint.minttracker.services.Tracker.kt</ID>
+    <ID>UnusedParameter:HistoryToolbar.kt$onBackClick:() -&gt; Unit</ID>
+    <ID>UnusedParameter:RecordAdapter.kt$RecordsAdapter.RecordViewHolder$record: Record</ID>
+    <ID>UnusedPrivateMember:HistoryFragment.kt$HistoryFragment$private fun changeVisabilityOfEmptyRecordListLayout(listIsEmpty: Boolean)</ID>
+    <ID>UnusedPrivateMember:HistoryFragment.kt$HistoryFragment$private fun showHistory(records: List&lt;Record&gt;)</ID>
+    <ID>UnusedPrivateMember:HistoryFragment.kt$HistoryFragment$private fun showRecordFragment(record: Record)</ID>
+    <ID>UnusedPrivateMember:HistoryFragment.kt$HistoryFragment$private fun showToast(message: String)</ID>
+    <ID>UnusedPrivateProperty:HistoryFragment.kt$HistoryFragment$private val recordsAdapter = RecordsAdapter()</ID>
+    <ID>UnusedPrivateProperty:HistoryFragment.kt$HistoryFragment$private var actionMode: ActionMode? = null</ID>
+    <ID>VariableNaming:DatabaseModule.kt$DatabaseModule$private val MIGRATION_4_5 = object : Migration(4, 5) { override fun migrate(database: SupportSQLiteDatabase) { database.execSQL("CREATE TABLE IF NOT EXISTS `track_new` (`idTrack` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER NOT NULL, `status` TEXT NOT NULL)") database.execSQL("INSERT INTO track_new (idTrack, date, status) SELECT id, date, status FROM track") database.execSQL("DROP TABLE track") database.execSQL("ALTER TABLE track_new RENAME TO track") } }</ID>
+    <ID>VariableNaming:DatabaseModule.kt$DatabaseModule$private val MIGRATION_5_6 = object : Migration(5, 6) { override fun migrate(database: SupportSQLiteDatabase) { database.execSQL("ALTER TABLE mintLocation ADD COLUMN segment INTEGER DEFAULT 0 NOT NULL") } }</ID>
+  </CurrentIssues>
+</SmellBaseline>
