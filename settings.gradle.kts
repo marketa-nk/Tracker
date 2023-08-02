@@ -7,4 +7,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "MintTracker"
-include ':app'
+include (":app")
