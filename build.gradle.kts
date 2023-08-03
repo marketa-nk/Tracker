@@ -42,6 +42,11 @@ tasks.register(name = "type", type = Delete::class) {
     delete(rootProject.buildDir)
 }
 
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    // Exclude generated models from Detekt checks
+    exclude("**/minttracker/theme/**")
+}
+
 tasks {
     register<Copy>("copyGitHooks") {
         description = "Copies the git hooks from scripts/git-hooks to the .git folder."

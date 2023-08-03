@@ -1,25 +1,14 @@
-<?xml version="1.0" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
     <ID>EmptyDefaultConstructor:InteractorModule.kt$InteractorModule$()</ID>
     <ID>FunctionNaming:HistoryEmptyView.kt$@Composable fun HistoryEmptyView()</ID>
-    <ID>FunctionNaming:HistoryFragment.kt$@Composable fun HistoryScreen( viewModel: HistoryViewModel, navController: NavController, // onBackPressed: () -&gt; Unit )</ID>
-    <ID>FunctionNaming:HistoryFragment.kt$@Composable fun HistoryView( records: List&lt;Record&gt;?, btnDeleteVisible: Boolean, onRecordClick: (Record) -&gt; Unit, onRecordLongClick: (Record) -&gt; Unit, onDeleteClick: () -&gt; Unit, onBackClick: () -&gt; Unit )</ID>
     <ID>FunctionNaming:HistoryItem.kt$@Composable fun HistorySmallItem( drawableResource: Int, text: String, modifier: Modifier = Modifier )</ID>
-    <ID>FunctionNaming:HistoryItem.kt$@OptIn(ExperimentalFoundationApi::class) @Composable fun HistoryItem( record: Record, onClick: (Record) -&gt; Unit, onLongClick: (Record) -&gt; Unit )</ID>
-    <ID>FunctionNaming:HistoryListView.kt$@Composable fun HistoryListView( records: List&lt;Record&gt;, onClick:(Record) -&gt; Unit, onLongClick: (Record) -&gt; Unit )</ID>
-    <ID>FunctionNaming:HistoryToolbar.kt$@Composable fun HistoryToolbar( btnDeleteVisible: Boolean, onBackClick:() -&gt; Unit, onDeleteClick: () -&gt; Unit )</ID>
-    <ID>FunctionNaming:HistoryToolbar.kt$@Composable fun TopAppBarActionButton( imageVector: ImageVector, description: String, onClick: () -&gt; Unit )</ID>
-    <ID>FunctionNaming:Theme.kt$@Composable internal fun MainTheme( content: @Composable () -&gt; Unit )</ID>
     <ID>LongMethod:MapFragment.kt$MapFragment$override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View</ID>
-    <ID>MagicNumber:Color.kt$0xFF000000</ID>
-    <ID>MagicNumber:Color.kt$0xFFE64A19</ID>
-    <ID>MagicNumber:Color.kt$0xFFFF6D00</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFFFFF</ID>
-    <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided&gt;$4</ID>
-    <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided&gt;$5</ID>
-    <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided&gt;$6</ID>
+    <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided>$4</ID>
+    <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided>$5</ID>
+    <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided>$6</ID>
     <ID>MagicNumber:FormatUtils.kt$10</ID>
     <ID>MagicNumber:FormatUtils.kt$100.0</ID>
     <ID>MagicNumber:FormatUtils.kt$1000</ID>
@@ -50,7 +39,7 @@
     <ID>MagicNumber:build.gradle.kts$33</ID>
     <ID>MatchingDeclarationName:ExampleUnitTest.kt$StopWatchTest</ID>
     <ID>MatchingDeclarationName:RecordAdapter.kt$RecordsAdapter : ListAdapter</ID>
-    <ID>MaxLineLength:DatabaseModule.kt$DatabaseModule.&lt;no name provided&gt;$database.execSQL("CREATE TABLE IF NOT EXISTS `track_new` (`idTrack` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER NOT NULL, `status` TEXT NOT NULL)")</ID>
+    <ID>MaxLineLength:DatabaseModule.kt$DatabaseModule.&lt;no name provided>$database.execSQL("CREATE TABLE IF NOT EXISTS `track_new` (`idTrack` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER NOT NULL, `status` TEXT NOT NULL)")</ID>
     <ID>MaxLineLength:DistanceCalculator.kt$DistanceCalculator$val distanceFromPreviousLocationInM = currentLocation.distanceToMintlocationInM(lastLocationUsedForDistanceTraveled!!)</ID>
     <ID>MaxLineLength:HistoryFragment.kt$HistoryFragment$// binding.recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)</ID>
     <ID>MaxLineLength:HistoryInteractorImpl.kt$HistoryInteractorImpl$class</ID>
@@ -93,10 +82,8 @@
     <ID>NewLineAtEndOfFile:Theme.kt$com.mint.minttracker.theme.Theme.kt</ID>
     <ID>NewLineAtEndOfFile:Track.kt$com.mint.minttracker.models.Track.kt</ID>
     <ID>NewLineAtEndOfFile:Tracker.kt$com.mint.minttracker.services.Tracker.kt</ID>
-    <ID>UnusedParameter:HistoryToolbar.kt$onBackClick:() -&gt; Unit</ID>
     <ID>UnusedParameter:RecordAdapter.kt$RecordsAdapter.RecordViewHolder$record: Record</ID>
     <ID>UnusedPrivateMember:HistoryFragment.kt$HistoryFragment$private fun changeVisabilityOfEmptyRecordListLayout(listIsEmpty: Boolean)</ID>
-    <ID>UnusedPrivateMember:HistoryFragment.kt$HistoryFragment$private fun showHistory(records: List&lt;Record&gt;)</ID>
     <ID>UnusedPrivateMember:HistoryFragment.kt$HistoryFragment$private fun showRecordFragment(record: Record)</ID>
     <ID>UnusedPrivateMember:HistoryFragment.kt$HistoryFragment$private fun showToast(message: String)</ID>
     <ID>UnusedPrivateProperty:HistoryFragment.kt$HistoryFragment$private val recordsAdapter = RecordsAdapter()</ID>
