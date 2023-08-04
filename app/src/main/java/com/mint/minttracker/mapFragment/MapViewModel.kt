@@ -12,17 +12,20 @@ import com.mint.minttracker.domain.buttonControl.ButtonState
 import com.mint.minttracker.domain.location.LocationInteractor
 import com.mint.minttracker.domain.location.LocationInteractorImpl
 import com.mint.minttracker.domain.map.MapInteractor
+import com.mint.minttracker.historyFragment.HistoryViewModel
 import com.mint.minttracker.models.MintLocation
+import com.mint.minttracker.models.Record
 import com.mint.minttracker.models.Status
 import com.mint.minttracker.models.Track
 import com.mint.minttracker.services.Tracker
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.SerialDisposable
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
 
-class MapViewModel(
+class MapViewModel @AssistedInject constructor(
     private val mapInteractor: MapInteractor,
     private val buttonControlInteractor: ButtonControlInteractor,
     private val locationInteractor: LocationInteractor,
@@ -205,18 +208,9 @@ class MapViewModel(
         requireLocationPermissionEvent.value = Unit
     }
 
-    class MapViewModelFactory @Inject constructor(
-        private val mapInteractor: MapInteractor,
-        private val buttonControlInteractorImpl: ButtonControlInteractorImpl,
-        private val locationInteractorImpl: LocationInteractorImpl,
-        private val tracker: Tracker,
-    ) : ViewModelProvider.Factory {
-
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            require(modelClass == MapViewModel::class.java)
-            return MapViewModel(mapInteractor, buttonControlInteractorImpl, locationInteractorImpl, tracker) as T
-        }
+    @AssistedFactory
+    interface Factory {
+        fun create(): MapViewModel
     }
 
     companion object {

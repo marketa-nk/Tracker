@@ -44,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.1.0-rc03"
+        kotlinCompilerExtensionVersion = "1.3.0"
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -70,6 +70,8 @@ dependencies {
     implementation ("com.google.android.gms:play-services-maps:18.0.1")
     implementation ("androidx.coordinatorlayout:coordinatorlayout:1.1.0")
 
+    implementation ("com.google.maps.android:maps-compose:2.9.0")
+
     implementation ("io.reactivex.rxjava2:rxkotlin:2.4.0")
     implementation ("io.reactivex.rxjava2:rxandroid:2.1.1")
 
@@ -77,18 +79,19 @@ dependencies {
     implementation ("androidx.room:room-rxjava2:2.4.1")
     kapt ("androidx.room:room-compiler:2.4.1")
 
-    kapt ("com.google.dagger:dagger-compiler:2.40.5")
-    implementation ("com.google.dagger:dagger:2.40.5")
+    kapt ("com.google.dagger:dagger-compiler:2.43.2")
+    implementation ("com.google.dagger:dagger:2.43.2")
 
     implementation (platform("com.google.firebase:firebase-bom:31.2.0"))
     implementation ("com.google.firebase:firebase-crashlytics-ktx")
     implementation ("com.google.firebase:firebase-analytics-ktx")
 
-    implementation ("androidx.compose.compiler:compiler:1.1.0-rc03")
-    implementation ("androidx.compose.foundation:foundation:1.1.0-rc03")
-    implementation ("androidx.compose.material:material:1.1.0-rc03")
-    implementation ("androidx.compose.runtime:runtime:1.1.0-rc03")
-    implementation ("androidx.compose.ui:ui:1.1.0-rc03")
-    implementation ("androidx.compose.ui:ui-tooling:1.1.0-rc03")
-    implementation ("androidx.compose.runtime:runtime-livedata:1.1.0-rc03")
+    implementation ("androidx.compose.compiler:compiler:1.3.0")
+    implementation ("androidx.compose.foundation:foundation:1.3.0")
+    implementation ("androidx.compose.material:material:1.3.0")
+    implementation ("androidx.compose.runtime:runtime:1.3.0")
+    implementation ("androidx.compose.ui:ui:1.3.0")
+    implementation ("androidx.compose.ui:ui-tooling:1.3.0")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.3.0")
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 }

@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.*
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.mint.minttracker.App
+import com.mint.minttracker.extensions.fragmentViewModels
 import com.mint.minttracker.historyFragment.composeViews.HistoryScreen
 import com.mint.minttracker.theme.MainTheme
 import javax.inject.Inject
@@ -16,7 +16,7 @@ class HistoryFragment : Fragment() {
     @Inject
     lateinit var factory: HistoryViewModel.HistoryViewModelFactory
 
-    private val viewModel: HistoryViewModel by viewModels { factory }
+    private val viewModel: HistoryViewModel by fragmentViewModels { factory.create() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

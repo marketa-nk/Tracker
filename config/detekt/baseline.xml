@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <SmellBaseline>
-  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <ManuallySuppressedIssues>
+    <ID>MagicNumber:Extensions.kt$33</ID>
+  </ManuallySuppressedIssues>
   <CurrentIssues>
     <ID>EmptyDefaultConstructor:InteractorModule.kt$InteractorModule$()</ID>
-    <ID>FunctionNaming:HistoryEmptyView.kt$@Composable fun HistoryEmptyView()</ID>
-    <ID>FunctionNaming:HistoryItem.kt$@Composable fun HistorySmallItem( drawableResource: Int, text: String, modifier: Modifier = Modifier )</ID>
     <ID>LongMethod:MapFragment.kt$MapFragment$override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View</ID>
     <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided>$4</ID>
     <ID>MagicNumber:DatabaseModule.kt$DatabaseModule.&lt;no name provided>$5</ID>

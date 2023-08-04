@@ -1,17 +1,16 @@
 package com.mint.minttracker.historyFragment
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.mint.minttracker.BaseViewModel
 import com.mint.minttracker.domain.history.HistoryInteractor
 import com.mint.minttracker.extensions.set
 import com.mint.minttracker.models.Record
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
 
-class HistoryViewModel @Inject constructor(private val historyInteractor: HistoryInteractor) : BaseViewModel() {
+class HistoryViewModel @AssistedInject constructor(private val historyInteractor: HistoryInteractor) : BaseViewModel() {
 
     val state: MutableLiveData<HistoryState> = MutableLiveData<HistoryState>(HistoryState.LoadingHistoryState())
 
@@ -82,15 +81,9 @@ class HistoryViewModel @Inject constructor(private val historyInteractor: Histor
             .addDisposable()
     }
 
-    class HistoryViewModelFactory @Inject constructor(
-        private val historyInteractor: HistoryInteractor,
-    ) : ViewModelProvider.Factory {
-
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            require(modelClass == HistoryViewModel::class.java)
-            return HistoryViewModel(historyInteractor) as T
-        }
+    @AssistedFactory
+    interface HistoryViewModelFactory {
+        fun create(): HistoryViewModel
     }
 }
 

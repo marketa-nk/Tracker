@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -33,6 +32,7 @@ import com.mint.minttracker.App
 import com.mint.minttracker.R
 import com.mint.minttracker.databinding.FragmentMapBinding
 import com.mint.minttracker.domain.buttonControl.ButtonState
+import com.mint.minttracker.extensions.fragmentViewModels
 import com.mint.minttracker.models.MintLocation
 import com.mint.minttracker.models.Status
 import com.mint.minttracker.secToUiString
@@ -43,9 +43,9 @@ import javax.inject.Inject
 class MapFragment : Fragment(), SaveDialogFragment.SaveDialogListener {
 
     @Inject
-    lateinit var factory: MapViewModel.MapViewModelFactory
+    lateinit var factory: MapViewModel.Factory
 
-    private val viewModel: MapViewModel by viewModels { factory }
+    private val viewModel: MapViewModel by fragmentViewModels { factory.create() }
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
